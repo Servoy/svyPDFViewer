@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: pdfviewer
+Bundle-Name: Servoy PDF Viewer
+Bundle-Version: 1.0.0
+Package-Type: Web-Component
+
+Name: pdfViewer/pdfViewer.spec
+Web-Component: True
+
