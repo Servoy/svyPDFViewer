@@ -29,7 +29,7 @@ uuid:"2EA11256-E8B8-4EC9-B4A0-4C925185B15C"
 },
 {
 location:"20,10",
-size:"280,30",
+size:"500,30",
 text:"Enter Document URL",
 transparent:true,
 typeid:7,
@@ -40,7 +40,7 @@ dataProviderID:"documentURL",
 location:"20,40",
 onDataChangeMethodID:"FAAFF2F3-46FE-4FD6-9C4B-55EF13903824",
 placeholderText:"i.e. http://localhost:8080/test.pdf",
-size:"280,30",
+size:"500,30",
 typeid:4,
 uuid:"D629A911-9556-4EA6-BA20-75CA27E3A1E8"
 }
