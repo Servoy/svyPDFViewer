@@ -8,19 +8,12 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
       },
       controller: function($scope, $element, $attrs) {
     	  
-    	  $scope.api.setDocument = function(url){
-    	  	var frame = document.getElementById('abc123');	
-    	  	frame.src = url;
-//    	  	alert('MARKUP: ' + $scope.model.svyMarkupId);
-    	  }
-    	  
     	  $scope.$watch('model.documentURL', function() {
-    		  var frame = document.getElementById('abc123');	
+    		  var frame = document.getElementById($scope.model.svyMarkupId);	
     		  if($scope.model.documentURL){
     			  frame.src = $scope.model.documentURL;  
     		  }
     	  });
-			     
       },
       templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'
     };
