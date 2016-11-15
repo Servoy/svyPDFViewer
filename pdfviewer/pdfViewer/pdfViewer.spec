@@ -18,11 +18,6 @@
 	
 	"api" : 
 	{
-		"setDocument" :
-		{
-			"parameters" : [
-				{ "name" : "url", "type" : "string" }
-			]
-		}
+		
 	}
 }
