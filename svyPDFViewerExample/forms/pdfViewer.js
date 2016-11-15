@@ -37,3 +37,14 @@ function onLoad(event) {
 //	elements.pdfViewer.setDocument(documentURL);
 	elements.pdfViewer.documentURL = 'test.pdf';
 }
+
+/**
+ * Perform the element default action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @properties={typeid:24,uuid:"F7E79E64-D024-433B-A32A-1934DE5CB699"}
+ */
+function reload(event) {
+	elements.pdfViewer.reload();
+}

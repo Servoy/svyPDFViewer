@@ -18,6 +18,11 @@
 	
 	"api" : 
 	{
-		
+		"reload" :
+		{
+			"parameters" : [
+				
+			]
+		}
 	}
 }

@@ -25,6 +25,13 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
 					});
 				}
 			});
+    	  
+    	  $scope.api.reload = function(){
+			var frame = document.getElementById($scope.model.svyMarkupId);	
+			if($scope.model.documentURL){
+  			  frame.src = $scope.model.documentURL;  
+  			}
+		  };
       },
       templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'
     };

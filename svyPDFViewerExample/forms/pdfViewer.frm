@@ -28,6 +28,16 @@ typeid:19,
 uuid:"2EA11256-E8B8-4EC9-B4A0-4C925185B15C"
 },
 {
+location:"525,40",
+onActionMethodID:"F7E79E64-D024-433B-A32A-1934DE5CB699",
+onDoubleClickMethodID:"-1",
+onRightClickMethodID:"-1",
+size:"80,30",
+text:"Reload",
+typeid:7,
+uuid:"7697259E-F5C6-442E-96DF-87991773672F"
+},
+{
 location:"20,10",
 size:"500,30",
 text:"Enter Document URL",
