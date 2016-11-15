@@ -23,3 +23,17 @@ function onDataChange(oldValue, newValue, event) {
 	elements.pdfViewer.documentURL = documentURL;
 	return true
 }
+
+/**
+ * Callback method when form is (re)loaded.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"887EC2E2-4FF8-4D8F-9FA2-DFA5A12C1B61"}
+ */
+function onLoad(event) {
+//	elements.pdfViewer.setDocument(documentURL);
+	elements.pdfViewer.documentURL = 'test.pdf';
+}
