@@ -8,14 +8,6 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
       },
       controller: function($scope, $element, $attrs) {
     	  
-    	  $scope.$watch('model.documentURL', function() {
-    		  var frame = document.getElementById($scope.model.svyMarkupId);	
-    		  var r = Math.round(Math.random() * 10000000);
-    		  if($scope.model.documentURL){
-    			  frame.src = $scope.model.documentURL + '?r=' + r;  
-    		  }
-    	  });
-    	  
     	  $scope.$watch('model.svyMarkupId', function(newValue, oldValue) {
 				if ($scope.model.svyMarkupId) {
 					$scope.$evalAsync(function(){
@@ -26,13 +18,14 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
 					});
 				}
 			});
-    	  
-    	  $scope.api.reload = function(){
-			var frame = document.getElementById($scope.model.svyMarkupId);	
-			var r = Math.round(Math.random() * 10000000);
-	  		  if($scope.model.documentURL){
-	  			  frame.src = $scope.model.documentURL + '?r=' + r;  
-	  		  }
+		  
+		  $scope.api.loadDocument = function(url){
+		  	var frame = document.getElementById($scope.model.svyMarkupId);	
+	  		if(url){
+	  			var r = Math.round(Math.random() * 10000000);
+	  			url = url + '?r=' + r;  
+	  		}
+	  		frame.src = url;
 		  };
       },
       templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'

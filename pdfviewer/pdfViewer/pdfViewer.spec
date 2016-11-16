@@ -12,16 +12,16 @@
 	],
 	"model":
 	{
-		"documentURL" : {"type": "string"}
+		
 	},
 	"handlers" : {},
 	
 	"api" : 
 	{
-		"reload" :
+		"loadDocument" :
 		{
 			"parameters" : [
-				
+				{"type" : "string", "name" : "url"}
 			]
 		}
 	}
