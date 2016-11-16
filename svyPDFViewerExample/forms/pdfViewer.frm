@@ -5,6 +5,7 @@ items:[
 anchors:15,
 json:{
 anchors:15,
+documentURL:"http://www.cbu.edu.zm/downloads/pdf-sample.pdf",
 location:{
 x:20,
 y:90
@@ -56,7 +57,6 @@ uuid:"D629A911-9556-4EA6-BA20-75CA27E3A1E8"
 }
 ],
 name:"pdfViewer",
-onLoadMethodID:"887EC2E2-4FF8-4D8F-9FA2-DFA5A12C1B61",
 showInMenu:true,
 typeid:3,
 uuid:"970DF7F6-6947-4148-B515-FA09834A5105"

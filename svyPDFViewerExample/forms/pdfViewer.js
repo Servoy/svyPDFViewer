@@ -1,13 +1,16 @@
 /**
+ * This is the document URL to load
+ * 
+ * @private 
  * @type {String}
  *
  * @properties={typeid:35,uuid:"FAAAC345-AD6E-4068-8F2F-D4653BCCE0AB"}
  */
-var documentURL = '';
+var documentURL = 'http://www.cbu.edu.zm/downloads/pdf-sample.pdf';
 
 
 /**
- * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
+ * When the document URL changes, (re)load the document
  *
  * @param {String} oldValue old value
  * @param {String} newValue new value
@@ -25,21 +28,8 @@ function onDataChange(oldValue, newValue, event) {
 }
 
 /**
- * Callback method when form is (re)loaded.
- *
- * @param {JSEvent} event the event that triggered the action
- *
- * @private
- *
- * @properties={typeid:24,uuid:"887EC2E2-4FF8-4D8F-9FA2-DFA5A12C1B61"}
- */
-function onLoad(event) {
-//	elements.pdfViewer.setDocument(documentURL);
-	elements.pdfViewer.documentURL = 'test.pdf';
-}
-
-/**
- * Perform the element default action.
+ * Reloads the document. 
+ * This may be needed when the document has changed on the back-end, but is still cached in the viewer.
  *
  * @param {JSEvent} event the event that triggered the action
  *
