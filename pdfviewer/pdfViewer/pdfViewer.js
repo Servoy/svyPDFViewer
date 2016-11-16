@@ -10,8 +10,9 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
     	  
     	  $scope.$watch('model.documentURL', function() {
     		  var frame = document.getElementById($scope.model.svyMarkupId);	
+    		  var r = Math.round(Math.random() * 10000000);
     		  if($scope.model.documentURL){
-    			  frame.src = $scope.model.documentURL;  
+    			  frame.src = $scope.model.documentURL + '?r=' + r;  
     		  }
     	  });
     	  
@@ -28,9 +29,10 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
     	  
     	  $scope.api.reload = function(){
 			var frame = document.getElementById($scope.model.svyMarkupId);	
-			if($scope.model.documentURL){
-  			  frame.src = $scope.model.documentURL;  
-  			}
+			var r = Math.round(Math.random() * 10000000);
+	  		  if($scope.model.documentURL){
+	  			  frame.src = $scope.model.documentURL + '?r=' + r;  
+	  		  }
 		  };
       },
       templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'
