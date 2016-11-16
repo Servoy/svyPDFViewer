@@ -1,0 +1,12 @@
+{
+    "name":"pdfviewer",
+    "displayName":"Servoy PDF Viewer",
+    "packageType": "Web-Component",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Crystal_Clear_mimetype_pdf.png",
+    "description": "A simple component for viewing PDF documents in Servoy's NGClient",
+    "wikiUrl": "https://github.com/Servoy/svyPDFViewer/wiki",
+    "sourceUrl" : "https://github.com/Servoy/svyPDFViewer",
+    "releases" : [{
+    	"version":"1.0.0",
+    	"url":"https://github.com/Servoy/svyPDFViewer/releases/download/v1.0.0/pdfviewer.zip"}]
+}
