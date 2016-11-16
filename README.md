@@ -4,7 +4,7 @@ PDF Viewer Component based on PDF.js
 Getting started
 -------------
 
-Get the latest version from the [releases](https://github.com/Servoy/svyPDFViewer/releases). Download and import the [svyPDFViewerExample.servoy](https://github.com/Servoy/svyPDFViewer/releases/download/v1.0.0/svyPDFViewerExample.servoy), projects as zip files or check out source directly from github.
+Get the latest version from the [releases](https://github.com/Servoy/svyPDFViewer/releases). Download and import the [svyPDFViewerExample.servoy](https://github.com/Servoy/svyPDFViewer/releases/download/v1.0.0/svyPDFViewerExample.servoy) example solution or check out source directly from github.
 
 Documentation
 -------------
