@@ -8,20 +8,34 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
       },
       controller: function($scope, $element, $attrs) {
     	  
+    	  // wait for element to load
     	  $scope.$watch('model.svyMarkupId', function(newValue, oldValue) {
 				if ($scope.model.svyMarkupId) {
 					$scope.$evalAsync(function(){
-						var frame = document.getElementById($scope.model.svyMarkupId);	
-						if($scope.model.documentURL){
-		    			  frame.src = $scope.model.documentURL;  
-		    			}
+						$scope.loadDocument();
 					});
 				}
 			});
 		  
-		  $scope.api.loadDocument = function(url){
+    	  // watch doc url
+    	  $scope.$watch('model.documentURL', function(newValue, oldValue) {
+    		  $scope.loadDocument();
+    	  });
+    	  
+    	  // reload doc
+    	  $scope.api.reload = function(){
+
+    		  // load doc
+    		  $scope.loadDocument();
+    	  };
+    	  
+    	  // load doc
+		  $scope.loadDocument = function(){
 		  	var frame = document.getElementById($scope.model.svyMarkupId);	
-	  		if(url){
+		  	var url = $scope.model.documentURL;
+		  	
+		  	// check for noCache and generate random http param
+	  		if(url && $scope.model.noCache === true){
 	  			var r = Math.round(Math.random() * 10000000);
 	  			url = url + '?r=' + r;  
 	  		}

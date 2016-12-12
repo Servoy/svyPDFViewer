@@ -12,17 +12,16 @@
 	],
 	"model":
 	{
-		
+		"documentURL" : "string",
+		"noCache" : "boolean"
 	},
 	"handlers" : {},
 	
 	"api" : 
 	{
-		"loadDocument" :
+		"reload" :
 		{
-			"parameters" : [
-				{"type" : "string", "name" : "url"}
-			]
+			"parameters" : []
 		}
 	}
 }
