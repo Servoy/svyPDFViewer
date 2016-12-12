@@ -10,6 +10,7 @@ location:{
 x:20,
 y:90
 },
+noCache:false,
 size:{
 height:370,
 width:600
@@ -30,7 +31,7 @@ uuid:"2EA11256-E8B8-4EC9-B4A0-4C925185B15C"
 },
 {
 location:"525,40",
-onActionMethodID:"F7E79E64-D024-433B-A32A-1934DE5CB699",
+onActionMethodID:"3F39F8B8-ADA3-4888-8F3C-F4F8A5581B81",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
 size:"80,30",
@@ -51,13 +52,13 @@ dataProviderID:"documentURL",
 location:"20,40",
 onDataChangeMethodID:"FAAFF2F3-46FE-4FD6-9C4B-55EF13903824",
 placeholderText:"i.e. http://localhost:8080/test.pdf",
+selectOnEnter:true,
 size:"500,30",
 typeid:4,
 uuid:"D629A911-9556-4EA6-BA20-75CA27E3A1E8"
 }
 ],
 name:"pdfViewer",
-onLoadMethodID:"B2E29DB1-646D-49E1-AB55-DF1FCFDD03F4",
 showInMenu:true,
 typeid:3,
 uuid:"970DF7F6-6947-4148-B515-FA09834A5105"

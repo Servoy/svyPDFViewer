@@ -34,18 +34,21 @@ function onDataChangeDocumentURL(oldValue, newValue, event) {
  * @properties={typeid:24,uuid:"F7E79E64-D024-433B-A32A-1934DE5CB699"}
  */
 function loadDocument() {
-	elements.pdfViewer.loadDocument(documentURL);
+	elements.pdfViewer.documentURL = documentURL;
 }
 
 /**
- * Load document when form is loaded
+ * Perform the element default action.
  *
  * @param {JSEvent} event the event that triggered the action
  *
  * @private
  *
- * @properties={typeid:24,uuid:"B2E29DB1-646D-49E1-AB55-DF1FCFDD03F4"}
+ * @properties={typeid:24,uuid:"3F39F8B8-ADA3-4888-8F3C-F4F8A5581B81"}
  */
-function onLoad(event) {
-	loadDocument();
+function reload(event) {
+	if(!elements.pdfViewer.noCache){
+		application.output('reload() called with noCache==false. Will likely have no effect.',LOGGINGLEVEL.WARNING);
+	}
+	elements.pdfViewer.reload();
 }
