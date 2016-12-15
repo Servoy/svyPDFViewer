@@ -8896,7 +8896,7 @@ function getViewerConfiguration() {
 function webViewerLoad() {
   var config = getViewerConfiguration();
   window.PDFViewerApplication = pdfjsWebLibs.pdfjsWebApp.PDFViewerApplication;
-  pdfjsWebLibs.pdfjsWebApp.PDFViewerApplication.run(config);
+  try{pdfjsWebLibs.pdfjsWebApp.PDFViewerApplication.run(config);}catch(e){console.log('Failed to load viewer')} // surround in try/catch for HTML5 editor
 }
 
 document.addEventListener('DOMContentLoaded', webViewerLoad, true);
