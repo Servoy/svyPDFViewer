@@ -6,7 +6,7 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
 		  api: "=svyApi",
           handlers: "=svyHandlers"
       },
-      controller: function($scope, $element, $attrs) {
+      controller: function($scope, $element, $attrs, $sce) {
     	  
     	  // wait for element to load
     	  $scope.$watch('model.svyMarkupId', function(newValue, oldValue) {
@@ -31,7 +31,7 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
     	  
     	  // load doc
 		  $scope.loadDocument = function(){
-		  	var frame = document.getElementById($scope.model.svyMarkupId);	
+	
 		  	var url = $scope.model.documentURL;
 		  	
 		  	// check for noCache and generate random http param
@@ -39,7 +39,7 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
 	  			var r = Math.round(Math.random() * 10000000);
 	  			url = url + '?r=' + r;  
 	  		}
-	  		frame.src = url;
+	  		$scope.model.frameSrc = $sce.trustAsResourceUrl(url);
 		  };
       },
       templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'
