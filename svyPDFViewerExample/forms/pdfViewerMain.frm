@@ -28,6 +28,13 @@ location:"250,217",
 text:"pdfViewer",
 typeid:15,
 uuid:"0F2BE935-605B-473B-A979-5C512A57D2F5"
+},
+{
+containsFormID:"F103B6AE-0584-4D34-B8E3-C620EBD76E13",
+location:"162,194",
+text:"pdfJsViewer",
+typeid:15,
+uuid:"98F8C3A4-AD31-409B-B4D8-75A26BBAFBA2"
 }
 ],
 typeid:16,

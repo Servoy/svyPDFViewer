@@ -1,0 +1,14 @@
+addEmptyValue:1,
+customValues:"auto\
+200\
+300\
+400\
+400,left,top\
+500\
+500,left,top\
+page-fit\
+page-height\
+page-width",
+name:"zoomLevel",
+typeid:34,
+uuid:"D924116B-EFB9-4047-84E3-1787DB6CFF5B"

@@ -13,13 +13,8 @@
 		"size" : {"type": "dimension",  "default" : {"width":100, "height":40}}, 
     	"location" : {"type": "point"}
 	},
-	"handlers" : {},
-	
 	"api" : 
 	{
-		"reload" :
-		{
-			"parameters" : []
-		}
+		"reload" : {}
 	}
 }

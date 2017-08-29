@@ -3,8 +3,7 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
       restrict: 'E',
       scope: {
     	  model: '=svyModel',
-		  api: "=svyApi",
-          handlers: "=svyHandlers"
+		  api: "=svyApi"
       },
       controller: function($scope, $element, $attrs, $sce) {
     	  
@@ -24,7 +23,6 @@ angular.module('pdfviewerPdfViewer',['servoy']).directive('pdfviewerPdfViewer', 
     	  
     	  // reload doc
     	  $scope.api.reload = function(){
-
     		  // load doc
     		  $scope.loadDocument();
     	  };
