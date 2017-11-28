@@ -14,11 +14,13 @@ angular.module('pdfviewerPdfJsViewer',['servoy']).directive('pdfviewerPdfJsViewe
     	  
     	  // load doc
 		  $scope.loadDocument = function(){
-		 	if(!$scope.model.documentURL) {
-			  return;
-	  		}
-		  		
-		  	var url = "pdfviewer/pdfJsViewer/web/viewer.html?file="+ ($scope.model.documentURL);
+		  	var url = "pdfviewer/pdfJsViewer/web/viewer.html";
+		  	if(!$scope.model.documentURL) {
+		  		$scope.model.frameSrc = $sce.trustAsResourceUrl(url);
+		  		return false;
+		  	} else {
+		  		url += "?file="+ ($scope.model.documentURL);
+		  	}
 			var urlExt = [];
 		  	// check for noCache and generate random http param
 	  		if($scope.model.noCache === true){

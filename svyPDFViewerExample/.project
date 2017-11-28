@@ -6,6 +6,8 @@
 		<project>resources</project>
 		<project>bootstrapcomponents</project>
 		<project>servoyextra</project>
+		<project>svyMicroSamples</project>
+		<project>svyUtils</project>
 		<project>pdfviewer</project>
 	</projects>
 	<buildSpec>

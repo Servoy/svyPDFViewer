@@ -9,6 +9,8 @@
 var documentURL = 'http://www.cbu.edu.zm/downloads/pdf-sample.pdf';
 
 
+
+
 /**
  * When the document URL changes, (re)load the document
  *
@@ -34,7 +36,19 @@ function onDataChangeDocumentURL(oldValue, newValue, event) {
  * @properties={typeid:24,uuid:"F7E79E64-D024-433B-A32A-1934DE5CB699"}
  */
 function loadDocument() {
-	elements.pdfViewer.documentURL = documentURL;
+	//Download the remote file to get it local
+	var file = plugins.http.getMediaData(documentURL);
+	
+	//Write the file to a remote file
+	var remoteFileName = 'temp-test.pdf'
+	var remoteFile = plugins.file.convertToRemoteJSFile('/'+remoteFileName)
+	remoteFile.setBytes(file,true);
+	
+	//Convert the remote file to a url, and display it in the pdf viewer
+	var remoteUrl = plugins.file.getUrlForRemoteFile(remoteFile);
+	if(remoteUrl) {
+		elements.pdfViewer.documentURL = remoteUrl;
+	}
 }
 
 /**
@@ -50,5 +64,20 @@ function reload(event) {
 	if(!elements.pdfViewer.noCache){
 		application.output('reload() called with noCache==false. Will likely have no effect.',LOGGINGLEVEL.WARNING);
 	}
+	loadDocument();
 	elements.pdfViewer.reload();
+}
+
+/**
+ * Callback method for when form is shown.
+ *
+ * @param {Boolean} firstShow form is shown first time after load
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"99D60C2B-DA26-43F9-B8A4-66DDC19D7862"}
+ */
+function onShow(firstShow, event) {
+	loadDocument();
 }

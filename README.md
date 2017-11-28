@@ -1,5 +1,8 @@
 # svyPDFViewer
-PDF Viewer Component based on PDF.js
+PDF Viewer Component based on PDF.js or on the default PDF browser support.
+
+pdfViewer: Browser based PDF viewer (Support depends on client installed tools)
+pdfJsViewer: PDF.js viewer, more info can be found on: https://mozilla.github.io/pdf.js
 
 Getting started
 -------------
