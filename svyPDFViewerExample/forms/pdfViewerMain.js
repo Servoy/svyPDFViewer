@@ -75,5 +75,5 @@ function getMoreInfo() {
 * @properties={typeid:24,uuid:"7AA9E545-EBCD-45DD-A95D-B2C5D965AC88"}
 */
 function getDownloadURL() {
-	return 'https://github.com/Servoy/svyPDFViewer/releases/download/v1.1.1/svyPDFViewerExample.servoy';
+	return 'https://api.github.com/repos/Servoy/svyPDFViewer/releases/latest';
 }
