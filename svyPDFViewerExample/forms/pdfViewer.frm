@@ -18,12 +18,12 @@ uuid:"44024E70-CB31-4E08-8683-70EE351A6321"
 },
 {
 location:"536,80",
-onActionMethodID:"3F39F8B8-ADA3-4888-8F3C-F4F8A5581B81",
+onActionMethodID:"F7E79E64-D024-433B-A32A-1934DE5CB699",
 onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
-size:"80,30",
+size:"103,30",
 styleClass:"btn btn-info",
-text:"Reload",
+text:"Load Document",
 typeid:7,
 uuid:"7697259E-F5C6-442E-96DF-87991773672F"
 },
@@ -38,7 +38,6 @@ uuid:"90622D89-4C80-432A-B1E6-09A33C997EFA"
 {
 dataProviderID:"documentURL",
 location:"31,80",
-onDataChangeMethodID:"FAAFF2F3-46FE-4FD6-9C4B-55EF13903824",
 placeholderText:"i.e. http://localhost/test.pdf",
 selectOnEnter:true,
 size:"500,30",

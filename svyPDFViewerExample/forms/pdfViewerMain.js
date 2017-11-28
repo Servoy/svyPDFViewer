@@ -44,7 +44,7 @@ function getIconStyleClass() {
 * @properties={typeid:24,uuid:"EC2E5A73-A024-4921-A881-C3AE1F35C79F"}
 */
 function getSampleCode() {
-	return printMethodCode(forms.pdfViewer['reload'])
+	return printMethodCode(forms.pdfViewer['loadDocument'])
 }
 
 /**
