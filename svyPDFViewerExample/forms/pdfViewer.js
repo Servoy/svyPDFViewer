@@ -6,7 +6,7 @@
  *
  * @properties={typeid:35,uuid:"FAAAC345-AD6E-4068-8F2F-D4653BCCE0AB"}
  */
-var documentURL = 'http://www.cbu.edu.zm/downloads/pdf-sample.pdf';
+var documentURL = 'https://servoy.com/download/reflecta-case-study/?wpdmdl=4295';
 
 /**
  * (Re)Loads the document
