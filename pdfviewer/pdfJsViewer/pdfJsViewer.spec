@@ -7,6 +7,7 @@
 	"model":
 		{
 		"documentURL" 	: 	{"type" : "string"},
+		"styleSheet" 	: 	{"type" : "media", "tags": {"scope":"design"}},
 		"noCache" 		:	{"type" : "boolean"},
 		"frameSrc" 		:	{"type" : "string", "tags" : {"scope" : "private"}},
 		"visible" 		:	{"type": "visible" },

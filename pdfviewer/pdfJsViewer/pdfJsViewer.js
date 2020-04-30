@@ -5,7 +5,7 @@ angular.module('pdfviewerPdfJsViewer',['servoy']).directive('pdfviewerPdfJsViewe
     	  model: '=svyModel',
 		  api: "=svyApi"
       },
-      controller: function($scope, $element, $attrs,$sce) {
+      controller: function($scope, $element, $attrs,$sce, $timeout) {
     	  // reload doc
     	  $scope.api.reload = function(){
     		  // load doc
@@ -39,6 +39,22 @@ angular.module('pdfviewerPdfJsViewer',['servoy']).directive('pdfviewerPdfJsViewe
 				url+= '#' + urlExt.join('&');
 			}
 	  		$scope.model.frameSrc = $sce.trustAsResourceUrl(url);
+	  		
+	  		// add custom CSS to the iframe
+	  		if ($scope.model.styleSheet) {
+	  			
+	  			// wait for the markup id
+	  			$timeout(function () {
+		  			var iframe = document.getElementById($scope.model.svyMarkupId);
+					$(iframe).on('load', function (event) {
+			  			var link = document.createElement("link");
+				  		link.href = "../../../" + $scope.model.styleSheet;
+				  		link.rel = "stylesheet"; 
+				  		link.type = "text/css"; 
+				  		frames[0].document.head.appendChild(link);				    
+					});
+	  			})
+	  		}
 		  };
 		  
 		  
