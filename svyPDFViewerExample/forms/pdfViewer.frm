@@ -2,6 +2,17 @@ customProperties:"formComponent:false",
 encapsulation:60,
 items:[
 {
+location:"643,80",
+onActionMethodID:"B482AE1C-AE84-4FE6-9619-35A25B485808",
+onDoubleClickMethodID:"-1",
+onRightClickMethodID:"-1",
+size:"130,30",
+styleClass:"btn btn-info",
+text:"Load default",
+typeid:7,
+uuid:"214094E2-9791-42DA-9B54-4E4D1A11DEAA"
+},
+{
 height:601,
 partType:5,
 typeid:19,
@@ -23,7 +34,7 @@ onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
 size:"103,30",
 styleClass:"btn btn-info",
-text:"Load Document",
+text:"Load by URL",
 typeid:7,
 uuid:"7697259E-F5C6-442E-96DF-87991773672F"
 },
@@ -48,18 +59,19 @@ uuid:"D629A911-9556-4EA6-BA20-75CA27E3A1E8"
 anchors:15,
 json:{
 anchors:15,
+dataProviderID:"byteArray",
 location:{
-x:32,
-y:126
+x:27,
+y:131
 },
 size:{
-height:450,
-width:700
+height:428,
+width:725
 }
 },
-location:"32,126",
+location:"27,131",
 name:"pdfViewer",
-size:"700,450",
+size:"725,428",
 typeName:"pdfviewer-pdf-Js-Viewer",
 typeid:47,
 uuid:"FEAF13FC-8165-4799-A565-FC057E256C84"
@@ -68,6 +80,6 @@ uuid:"FEAF13FC-8165-4799-A565-FC057E256C84"
 name:"pdfViewer",
 onShowMethodID:"99D60C2B-DA26-43F9-B8A4-66DDC19D7862",
 showInMenu:true,
-size:"760,601",
+size:"782,601",
 typeid:3,
 uuid:"970DF7F6-6947-4148-B515-FA09834A5105"

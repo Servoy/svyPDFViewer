@@ -1,4 +1,16 @@
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"8355F6CB-ACDB-419D-A503-F2AC4B88C86C",variableType:4}
+ */
+var pageNumber = null;
+
+/**
+ * @properties={typeid:35,uuid:"100AFDEC-AD11-4EC1-B4C0-9EBD6CB69FA1",variableType:-4}
+ */
+var byteArray
+
+/**
  * This is the document URL to load
  * 
  * @private 
@@ -26,8 +38,10 @@ function loadDocument() {
 	//Convert the remote file to a url, and display it in the PDF viewer
 	var remoteUrl = plugins.file.getUrlForRemoteFile('/'+remoteFileName);
 	if(remoteUrl) {
+		byteArray = null;
 		elements.pdfViewer.documentURL = remoteUrl;
 	}
+
 }
 
 /**
@@ -42,4 +56,33 @@ function loadDocument() {
  */
 function onShow(firstShow, event) {
 	loadDocument();
+}
+
+/**
+ * Perform the element onclick action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @protected
+ *
+ * @properties={typeid:24,uuid:"B482AE1C-AE84-4FE6-9619-35A25B485808"}
+ */
+function loadDocumentDataprovider(event) {
+	byteArray = solutionModel.getMedia('test.pdf').bytes;
+}
+
+/**
+ * @param oldValue
+ * @param newValue
+ * @param {JSEvent} event
+ *
+ * @return {boolean}
+ *
+ * @protected
+ *
+ * @properties={typeid:24,uuid:"43E911F6-C403-4410-A4D2-55571358752A"}
+ */
+function onDataChange(oldValue, newValue, event) {
+	elements.pdfViewer.pageNumber = newValue;
+	return false;
 }
