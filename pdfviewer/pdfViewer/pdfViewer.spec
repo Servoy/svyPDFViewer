@@ -15,6 +15,8 @@
 	},
 	"api" : 
 	{
-		"reload" : {}
+		"reload" : {
+            "delayUntilFormLoads": true 
+        }
 	}
 }
