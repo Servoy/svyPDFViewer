@@ -1,3 +1,3 @@
-<div style="width:100%; height:100%;">
-	<iframe ng-if="model.visible" id="{{model.svyMarkupId}}" ng-src="{{iframeURL}}" style="width:100%; height:100%"/>
+<div ng-class="model.styleClass" id="{{::model.svyMarkupId}}" class="pdfjsviewer-fullheight">
+	<iframe ng-if="model.visible" ng-src="{{iframeURL}}" style="width:100%; height:100%"/>
 </div>

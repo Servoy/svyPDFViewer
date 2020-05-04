@@ -65,7 +65,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     console.log('bla')
                     // wait for the markup id
                     $timeout(function () {
-                        var iframe = document.getElementById($scope.model.svyMarkupId);
+                        var iframe = $element.find("iframe")[0];
                         $(iframe).on('load', function (event) {
                             var link = document.createElement("link");
                             link.href = window.location.origin + '/' + $scope.model.styleSheet;

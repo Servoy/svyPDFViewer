@@ -3,15 +3,16 @@
 	"displayName": "pdfJsViewer",
 	"version": 1,
 	"definition": "pdfviewer/pdfJsViewer/pdfJsViewer.js",
-	"libraries": [],
+	"libraries": [{"name":"pdfviewer-pdfjsviewer-css", "version":"1.0", "url":"pdfviewer/pdfJsViewer/pdfJsViewer.css", "mimetype":"text/css"}],
 	"model":
 		{
         "documentURL" 	: 	{"type" : "string"},
-        "dataProviderID" : { "type":"dataprovider", "tags": { "scope" :"design" }},
-		"styleSheet" 	: 	{"type" : "media", "tags": {"scope":"design"}},
+        "dataProviderID":   {"type":"dataprovider", "tags": { "scope" :"design" }},
+        "styleSheet" 	: 	{"type" : "media", "tags": {"scope":"design"}},
+        "styleClass"    :   {"type" :"styleclass", "tags": { "scope" :"design" }},
 		"noCache" 		:	{"type" : "boolean"},
 		"visible" 		:	{"type": "visible" },
-		"size" 			:	{"type": "dimension",  "default" : {"width":100, "height":40}}, 
+		"size" 			:	{"type": "dimension",  "default" : {"width":50, "height":50}}, 
     	"pageNumber"	:   {"type": "int"},
     	"zoomLevel"		:   {"type": "string"}
 	},
