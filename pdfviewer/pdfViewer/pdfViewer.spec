@@ -6,12 +6,11 @@
 	"libraries": [],
 	"model":
 	{
-		"documentURL" : "string",
+        "documentURL" 	: 	{"type" : "string"},
+        "dataProviderID" : { "type":"dataprovider", "tags": { "scope" :"design" }},
 		"noCache" : "boolean",
-		"frameSrc" : {"type" : "string", "tags" : {"scope" : "private"}},
 		"visible" : {"type": "visible" },
-		"size" : {"type": "dimension",  "default" : {"width":100, "height":40}}, 
-    	"location" : {"type": "point"}
+		"size" : {"type": "dimension",  "default" : {"width":100, "height":40}}
 	},
 	"api" : 
 	{

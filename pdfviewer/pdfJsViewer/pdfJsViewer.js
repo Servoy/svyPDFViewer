@@ -12,12 +12,14 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.zoomLevel = '';
             $scope.noCache = '';
         },
-        controller: function ($scope, $element, $attrs, $timeout) {
+        controller: function ($scope, $element, $attrs, $timeout, $sce) {
             // reload doc
             $scope.api.reload = function () {
                 // load doc
                 createBaseURL();
                 setPageNumer();
+                zoomLevel();
+                noCache();
             };
 
             // load doc
@@ -26,7 +28,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 if ($scope.model.dataProviderID && $scope.model.dataProviderID.url) {
                     $scope.documentURL += "?file=" + (window.location.origin + '/' + $scope.model.dataProviderID.url);
                 } else if ($scope.model.documentURL) {
-                    console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
+                    // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
                     $scope.documentURL += "?file=" + ($scope.model.documentURL);
                 } else {
                     return false;
@@ -56,20 +58,23 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     $scope.pageNumber = '';
                 }
             }
-            
-            // add custom CSS to the iframe
-            if ($scope.model.styleSheet) {
-                // wait for the markup id
-                $timeout(function () {
-                    var iframe = document.getElementById($scope.model.svyMarkupId);
-                    $(iframe).on('load', function (event) {
-                        var link = document.createElement("link");
-                        link.href = "../../../" + $scope.model.styleSheet;
-                        link.rel = "stylesheet";
-                        link.type = "text/css";
-                        frames[0].document.head.appendChild(link);
-                    });
-                })
+
+            function addCustomCSS() {
+                // add custom CSS to the iframe
+                if ($scope.model.styleSheet) {
+                    console.log('bla')
+                    // wait for the markup id
+                    $timeout(function () {
+                        var iframe = document.getElementById($scope.model.svyMarkupId);
+                        $(iframe).on('load', function (event) {
+                            var link = document.createElement("link");
+                            link.href = window.location.origin + '/' + $scope.model.styleSheet;
+                            link.rel = "stylesheet";
+                            link.type = "text/css";
+                            frames[0].document.head.appendChild(link);
+                        });
+                    })
+                }
             }
 
             $scope.$watch('[documentURL, pageNumber, zoomLevel, noCache]', function(newValues, oldValues, scope) {
@@ -81,7 +86,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 newValues = newValues.filter(function(item) {
                     return (item != null && item != '');
                 });
-                $scope.iframeURL = url + '#' + newValues.join('&');
+                $scope.iframeURL = $sce.trustAsResourceUrl(url + '#' + newValues.join('&'));
                 console.debug('Rendering iframe pdf with URL: ' + $scope.iframeURL);
             })
 
@@ -104,7 +109,10 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.$watch('model.dataProviderID', function (newValue, oldValue) {
                 createBaseURL();
             });
-            
+
+            $scope.$watch('model.visible', function (newValue, oldValue) {
+                addCustomCSS();
+            });
         },
         templateUrl: 'pdfviewer/pdfJsViewer/pdfJsViewer.html'
     };

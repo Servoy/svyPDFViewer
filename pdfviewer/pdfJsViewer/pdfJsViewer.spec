@@ -6,13 +6,12 @@
 	"libraries": [],
 	"model":
 		{
-        "documentURL" 	: 	{"type" : "string", "deprecated": "Replaced by dataProvider support"},
+        "documentURL" 	: 	{"type" : "string"},
         "dataProviderID" : { "type":"dataprovider", "tags": { "scope" :"design" }},
 		"styleSheet" 	: 	{"type" : "media", "tags": {"scope":"design"}},
 		"noCache" 		:	{"type" : "boolean"},
 		"visible" 		:	{"type": "visible" },
 		"size" 			:	{"type": "dimension",  "default" : {"width":100, "height":40}}, 
-    	"location" 		:	{"type": "point"},
     	"pageNumber"	:   {"type": "int"},
     	"zoomLevel"		:   {"type": "string"}
 	},

@@ -7,9 +7,16 @@ items:[
 {
 containsFormID:"970DF7F6-6947-4148-B515-FA09834A5105",
 location:"172,140",
-text:"PDF Viewer Sample",
+text:"PDF JS Viewer Sample",
 typeid:15,
 uuid:"3F08967B-A5FF-4C8A-A291-E367D9852CEE"
+},
+{
+containsFormID:"789A7E14-D679-4D58-9974-DD0C8AAAC1AD",
+location:"310,179",
+text:"PDF Viewer Sample",
+typeid:15,
+uuid:"6D939145-2459-4BBE-B5DB-2F0059F18BE8"
 }
 ],
 location:"0,0",

@@ -1,0 +1,86 @@
+customProperties:"formComponent:false",
+encapsulation:60,
+items:[
+{
+location:"643,80",
+onActionMethodID:"B482AE1C-AE84-4FE6-9619-35A25B485808",
+onDoubleClickMethodID:"-1",
+onRightClickMethodID:"-1",
+size:"130,30",
+styleClass:"btn btn-info",
+text:"Load default",
+typeid:7,
+uuid:"214094E2-9791-42DA-9B54-4E4D1A11DEAA"
+},
+{
+height:600,
+partType:5,
+typeid:19,
+uuid:"2EA11256-E8B8-4EC9-B4A0-4C925185B15C"
+},
+{
+anchors:11,
+location:"30,10",
+size:"700,30",
+styleClass:"label_header_2",
+text:"PDF.js viewer",
+typeid:7,
+uuid:"44024E70-CB31-4E08-8683-70EE351A6321"
+},
+{
+location:"536,80",
+onActionMethodID:"F7E79E64-D024-433B-A32A-1934DE5CB699",
+onDoubleClickMethodID:"-1",
+onRightClickMethodID:"-1",
+size:"103,30",
+styleClass:"btn btn-info",
+text:"Load by URL",
+typeid:7,
+uuid:"7697259E-F5C6-442E-96DF-87991773672F"
+},
+{
+location:"31,50",
+size:"500,30",
+text:"Enter Document URL",
+transparent:true,
+typeid:7,
+uuid:"90622D89-4C80-432A-B1E6-09A33C997EFA"
+},
+{
+dataProviderID:"documentURL",
+location:"31,80",
+placeholderText:"i.e. http://localhost/test.pdf",
+selectOnEnter:true,
+size:"500,30",
+typeid:4,
+uuid:"D629A911-9556-4EA6-BA20-75CA27E3A1E8"
+},
+{
+anchors:15,
+json:{
+anchors:15,
+dataProviderID:"byteArray",
+location:{
+x:25,
+y:122
+},
+size:{
+height:460,
+width:735
+},
+styleSheet:"9181189E-B534-4790-BA52-3EAE1C50E964"
+},
+location:"25,122",
+name:"pdfViewer",
+size:"735,460",
+typeName:"pdfviewer-pdf-Js-Viewer",
+typeid:47,
+uuid:"FEAF13FC-8165-4799-A565-FC057E256C84"
+}
+],
+name:"pdfViewerJS",
+onShowMethodID:"99D60C2B-DA26-43F9-B8A4-66DDC19D7862",
+showInMenu:true,
+size:"782,601",
+typeid:3,
+uuid:"970DF7F6-6947-4148-B515-FA09834A5105"

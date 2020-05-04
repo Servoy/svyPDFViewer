@@ -1,0 +1,7 @@
+.toolbar {
+    display: none;
+}
+
+#viewerContainer {
+    top: 0px !important;
+}
