@@ -16,7 +16,8 @@ angular.module('pdfviewerPdfViewer', ['servoy']).directive('pdfviewerPdfViewer',
             function createBaseURL() {
                 $scope.documentURL = "";
                 if ($scope.model.dataProviderID && $scope.model.dataProviderID.url) {
-                    $scope.documentURL += window.location.origin + '/' + $scope.model.dataProviderID.url;
+                	var serverUrl = window.location.href.split('/solutions/')[0];
+                    $scope.documentURL += serverUrl + '/' + $scope.model.dataProviderID.url;
                 } else if ($scope.model.documentURL) {
                     // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
                     $scope.documentURL += $scope.model.documentURL;
