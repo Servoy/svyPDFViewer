@@ -1,6 +1,7 @@
 {
 	"name": "pdfviewer-pdf-Viewer",
 	"displayName": "pdfViewer",
+	"categoryName": "Media",
 	"version": 1,
 	"definition": "pdfviewer/pdfViewer/pdfViewer.js",
 	"libraries": [{"name":"pdfviewer-pdfViewer-css", "version":"1.0", "url":"pdfviewer/pdfViewer/pdfViewer.css", "mimetype":"text/css"}],
