@@ -3,6 +3,7 @@
 	"displayName": "pdfViewer",
 	"categoryName": "Media",
 	"version": 1,
+	"icon": "pdfviewer/pdfViewer/icon.png",
 	"definition": "pdfviewer/pdfViewer/pdfViewer.js",
 	"libraries": [{"name":"pdfviewer-pdfViewer-css", "version":"1.0", "url":"pdfviewer/pdfViewer/pdfViewer.css", "mimetype":"text/css"}],
 	"model":
