@@ -27,7 +27,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 $scope.documentURL = "pdfviewer/pdfJsViewer/web/viewer.html";
                 if ($scope.model.dataProviderID && $scope.model.dataProviderID.url) {
                 	var serverUrl = window.location.href.split('/solutions/')[0];
-                    $scope.documentURL += "?file=" + (serverUrl + '/' + $scope.model.dataProviderID.url);
+                    $scope.documentURL += "?file=" + encodeURIComponent(serverUrl + '/' + $scope.model.dataProviderID.url);
                 } else if ($scope.model.documentURL) {
                     // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
                     $scope.documentURL += "?file=" + ($scope.model.documentURL);
