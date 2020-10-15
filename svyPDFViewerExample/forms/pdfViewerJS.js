@@ -21,7 +21,7 @@ var documentURL = 'https://servoy.com/download/reflecta-case-study/?wpdmdl=4295'
  */
 function loadDocument() {
 	//Download the remote file
-	var file = plugins.http.getMediaData(documentURL);
+	var file = plugins.http.getMediaData(encodeURI(documentURL));
 	if(file) {
 		byteArray = file;
 	}
