@@ -8,6 +8,7 @@ onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
 size:"103,30",
 styleClass:"btn btn-info",
+tabSeq:-2,
 text:"Load by URL",
 typeid:7,
 uuid:"0FB74635-BA74-4222-AC84-635441DF0E4E"
@@ -15,6 +16,7 @@ uuid:"0FB74635-BA74-4222-AC84-635441DF0E4E"
 {
 location:"31,50",
 size:"500,30",
+tabSeq:-2,
 text:"Enter Document URL",
 transparent:true,
 typeid:7,
@@ -38,7 +40,8 @@ y:122
 size:{
 height:460,
 width:735
-}
+},
+tabSeq:2
 },
 location:"25,122",
 name:"pdf_Viewer",
@@ -53,6 +56,7 @@ location:"31,80",
 placeholderText:"i.e. http://localhost/test.pdf",
 selectOnEnter:true,
 size:"500,30",
+tabSeq:1,
 typeid:4,
 uuid:"8E4BADAE-5025-4976-9ACA-3A2E4F51AFCA"
 },
@@ -63,6 +67,7 @@ onDoubleClickMethodID:"-1",
 onRightClickMethodID:"-1",
 size:"130,30",
 styleClass:"btn btn-info",
+tabSeq:-2,
 text:"Load default",
 typeid:7,
 uuid:"BCA83701-3CD6-42CD-BA2D-DC4929DBCA05"
@@ -72,6 +77,7 @@ anchors:11,
 location:"30,10",
 size:"700,30",
 styleClass:"label_header_2",
+tabSeq:-2,
 text:"PDF viewer",
 typeid:7,
 uuid:"D8A2F35B-5B10-4BB3-A666-D37D75BB92FA"

@@ -63,7 +63,6 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             function addCustomCSS() {
                 // add custom CSS to the iframe
                 if ($scope.model.styleSheet) {
-                    console.log('bla')
                     // wait for the markup id
                     $timeout(function () {
                         var iframe = $element.find("iframe")[0];
@@ -114,6 +113,13 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.$watch('model.visible', function (newValue, oldValue) {
                 addCustomCSS();
             });
+            
+            $scope.onTabSequenceRequest = function() {
+                $timeout(function () {
+                    var iframe = $element.find("iframe")[0];
+                    iframe.contentWindow.focus();
+                });
+            }
         },
         templateUrl: 'pdfviewer/pdfJsViewer/pdfJsViewer.html'
     };

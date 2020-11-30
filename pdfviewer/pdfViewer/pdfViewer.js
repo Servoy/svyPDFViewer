@@ -10,7 +10,7 @@ angular.module('pdfviewerPdfViewer', ['servoy']).directive('pdfviewerPdfViewer',
             $scope.documentURL = '';
             $scope.noCache = '';
         },
-        controller: function ($scope, $element, $attrs, $sce) {
+        controller: function ($scope, $element, $attrs, $sce, $timeout) {
 
             // load doc
             function createBaseURL() {
@@ -67,6 +67,13 @@ angular.module('pdfviewerPdfViewer', ['servoy']).directive('pdfviewerPdfViewer',
                 createBaseURL();
                 noCache();
             };
+
+            $scope.onTabSequenceRequest = function() {
+                $timeout(function () {
+                    var iframe = $element.find("iframe")[0];
+                    iframe.contentWindow.focus();
+                });
+            }
         },
         templateUrl: 'pdfviewer/pdfViewer/pdfViewer.html'
     };
