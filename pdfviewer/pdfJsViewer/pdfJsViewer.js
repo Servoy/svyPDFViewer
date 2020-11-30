@@ -15,11 +15,14 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
         controller: function ($scope, $element, $attrs, $timeout, $sce) {
             // reload doc
             $scope.api.reload = function () {
-                // load doc
-                createBaseURL();
-                setPageNumer();
-                zoomLevel();
-                noCache();
+                $timeout(function () {
+                    var iframe = $element.find("iframe")[0];
+                    var url = iframe.src;
+                    iframe.src = 'about:blank';
+                    $timeout(function () {
+                        iframe.src = url;
+                    }, 5);
+                });
             };
 
             // load doc

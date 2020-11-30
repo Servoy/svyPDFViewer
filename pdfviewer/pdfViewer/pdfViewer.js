@@ -64,8 +64,14 @@ angular.module('pdfviewerPdfViewer', ['servoy']).directive('pdfviewerPdfViewer',
 
             // reload doc
             $scope.api.reload = function () {
-                createBaseURL();
-                noCache();
+                $timeout(function () {
+                    var iframe = $element.find("iframe")[0];
+                    var url = iframe.src;
+                    iframe.src = 'about:blank';
+                    $timeout(function () {
+                        iframe.src = url;
+                    }, 5);
+                });
             };
 
             $scope.onTabSequenceRequest = function() {
