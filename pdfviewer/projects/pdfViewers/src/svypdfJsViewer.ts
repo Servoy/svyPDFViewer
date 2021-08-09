@@ -4,7 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
-    selector: 'svy-pdf-js-viewer',
+    selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()">
             <iframe #iframe *ngIf="visible" [src]="iframeURL" style="width:100%; height:100%"></iframe>

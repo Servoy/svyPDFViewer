@@ -3,7 +3,7 @@ import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChang
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-    selector: 'svy-pdf-viewer',
+    selector: 'pdfviewer-pdf-Viewer',
     templateUrl: './svypdfviewer.html',
 })
 export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
