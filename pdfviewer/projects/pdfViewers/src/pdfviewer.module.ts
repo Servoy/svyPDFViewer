@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ServoyPublicModule } from '@servoy/public';
+import { SafePipe } from './SafePipe';
 import { SvyPdfJsViewer } from './svypdfJsViewer';
 import { SvyPDFViewer } from './svypdfviewer';
  
 @NgModule({
     declarations: [
         SvyPDFViewer,
-        SvyPdfJsViewer
+        SvyPdfJsViewer,
+        SafePipe
     ],
     providers: [],
     imports: [

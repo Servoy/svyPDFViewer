@@ -7,7 +7,7 @@ import { DOCUMENT } from '@angular/common';
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()">
-            <iframe #iframe *ngIf="visible" [src]="iframeURL" style="width:100%; height:100%"></iframe>
+            <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%"></iframe>
         </div> `,
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
@@ -28,47 +28,47 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     documentUrlVar = "";
     zoomLevelVar = ""
     pageNumberVar = "";
-    iframeURL: SafeResourceUrl = "";
+    iframeURL = "";
 
     constructor(renderer: Renderer2, cdRef: ChangeDetectorRef, 
-        private windowRef: WindowRefService, 
-        private sanitizer: DomSanitizer,
-        @Inject(DOCUMENT) private doc: Document) {
+        private windowRef: WindowRefService) {
         super(renderer, cdRef);
     }
 
-    svyOnChanges(changes: SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges) {
         if (changes) {
-            for (const property of Object.keys(changes)) {
-                switch (property) {
-                    case 'noCache':
-                        this.setNoCache();
-                        break;
-                    case 'documentURL':
-                        this.createBaseURL();
-                        break;
-                    case 'dataProviderID':
-                        this.createBaseURL();
-                        break;
-                    case 'zoomLevel':
-                        this.setZoomLevel();
-                        break;
-                    case 'pageNumber': 
-                        this.setPageNumber();
-                        break;
-                    case 'visible': 
-                        this.addCustomCSS();
-                        break; 
+            for (const entry of Object.entries(changes)) {
+                if (entry[1].currentValue !== entry[1].previousValue) {
+                    switch (entry[0]) {
+                        case 'noCache':
+                            this.setNoCache();
+                            break;
+                        case 'documentURL':
+                            this.createBaseURL();
+                            break;
+                        case 'dataProviderID':
+                            this.createBaseURL();
+                            break;
+                        case 'zoomLevel':
+                            this.setZoomLevel();
+                            break;
+                        case 'pageNumber': 
+                            this.setPageNumber();
+                            break;
+                        case 'visible': 
+                            this.addCustomCSS();
+                            break; 
+                    }
                 }
             }
         }
     }
 
     createBaseURL() {
-        this.documentURL = "pdfviewer/pdfJsViewer/web/viewer.html";
+        this.documentUrlVar = "pdfviewer/pdfJsViewer/web/viewer.html";
         if (this.dataProviderID && this.dataProviderID.url) {
-            let serverURL = this.windowRef.nativeWindow.location.href.split('/solutions/')[0];
-            this.documentUrlVar += "?file=" + serverURL + '/' + encodeURI(this.dataProviderID.url); 
+            let serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
+            this.documentUrlVar += "?file=" + serverURL + '/' + encodeURIComponent(this.dataProviderID.url); 
         } else if (this.documentURL) {
             // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
             this.documentUrlVar += "?file=" + this.documentURL;
@@ -132,7 +132,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         }
         const url = newValues.shift();
         newValues = newValues.filter((item) => { return (item != null && item != '')});
-        this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(url + '#' + newValues.join('&'));
+        this.iframeURL = url + '#' + newValues.join('&');
         console.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
     }
 

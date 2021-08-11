@@ -1,10 +1,14 @@
 import { ServoyBaseComponent, WindowRefService } from '@servoy/public';
-import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'pdfviewer-pdf-Viewer',
-    templateUrl: './svypdfviewer.html',
+    template: `
+        <div [ngClass]="styleClass" style="width:100%; height:100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()">
+                <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%" ></iframe> 
+        </div>
+    `
 })
 export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
 
@@ -19,15 +23,14 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     noCacheVar = "";
     documentUrlVar = "";
-    iframeURL: SafeResourceUrl = "";
+    iframeURL = "";
 
     constructor(renderer: Renderer2, cdRef: ChangeDetectorRef, 
-        private windowRef: WindowRefService, 
-        private sanitizer: DomSanitizer ) {
+        private windowRef: WindowRefService) {
         super(renderer, cdRef);
     }
 
-    svyOnChanges(changes: SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges) {
         if (changes) {
             for (const property of Object.keys(changes)) {
                 const change = changes[property];
@@ -47,9 +50,9 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     createBaseURL() {
-        this.documentURL = "";
+        this.documentUrlVar = "";
         if (this.dataProviderID && this.dataProviderID.url) {
-            let serverURL = this.windowRef.nativeWindow.location.href.split('/solutions/')[0];
+            let serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
             this.documentUrlVar += serverURL + '/' + encodeURI(this.dataProviderID.url); 
         } else if (this.documentURL) {
             // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
@@ -82,7 +85,7 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
         }
         const url = newValues.shift();
         newValues = newValues.filter((item) => { return (item != null && item != '')});
-        this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(url + '#' + newValues.join('&'));
+        this.iframeURL = url + '#' + newValues.join('&');
         console.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
     }
 
