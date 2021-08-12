@@ -115,7 +115,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                     link.href = this.windowRef.nativeWindow.location.origin + '/' + this.styleSheet;
                     link.rel = "stylesheet";
                     link.type = "text/css";
-                    // frames[0].document.head.appendChild(link);
+                    frames[0].document.head.appendChild(link);
                 });
                 this.iframeElementRef.nativeElement
             });
