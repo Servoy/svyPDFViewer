@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-SymbolicName: pdfviewer
 Bundle-Name: Servoy PDF Viewer
-Bundle-Version: 1.3.3
+Bundle-Version: 1.4.0
 Entry-Point: dist/servoy/pdfviewer
 NPM-PackageName: @servoy/pdfviewer
 NG2-Module: PdfViewerModule
