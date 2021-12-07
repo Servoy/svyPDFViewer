@@ -27,7 +27,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
 
             // load doc
             function createBaseURL() {
-                $scope.documentURL = "pdfviewer/pdfJsViewer/web_2.9/viewer.html";
+                $scope.documentURL = "pdfviewer/pdfJsViewer/pdfjs_2.9/web/viewer.html";
                 if ($scope.model.dataProviderID && $scope.model.dataProviderID.url) {
                 	var serverUrl = window.location.href.split('/solutions/')[0];
                     $scope.documentURL += "?file=" + serverUrl + '/' + encodeURIComponent($scope.model.dataProviderID.url);
