@@ -5,7 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 @Component({
     selector: 'pdfviewer-pdf-Viewer',
     template: `
-        <div [ngClass]="styleClass" style="width:100%; height:100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()">
+        <div [ngClass]="styleClass" style="width:100%; height:100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
                 <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%" ></iframe> 
         </div>
     `

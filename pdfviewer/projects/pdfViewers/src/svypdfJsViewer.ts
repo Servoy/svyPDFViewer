@@ -6,7 +6,7 @@ import { DOCUMENT } from '@angular/common';
 @Component({
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
-        <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()">
+        <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
             <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%"></iframe>
         </div> `,
 })
