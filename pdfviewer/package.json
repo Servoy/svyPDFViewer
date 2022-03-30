@@ -20,6 +20,7 @@
     "@angular/core": "13.2.2",
     "@angular/forms": "^13.2.2",
     "@servoy/public": "2022.3.0",
+    "ng2-pdfjs-viewer": "^13.2.2",
     "rxjs": "^7.5.4",
     "tslib": "2.3.1",
     "zone.js": "^0.11.4"
