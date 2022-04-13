@@ -1,6 +1,6 @@
 {
     "name": "@servoy/pdfviewer",
-    "version": "2022.3.1",
+    "version": "2022.3.2",
     "peerDependencies": {
       "@angular/common": "^13",
       "@angular/core": "^13",
