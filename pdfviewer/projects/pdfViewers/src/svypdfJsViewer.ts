@@ -34,6 +34,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         this.log = logFactory.getLogger('SvyPdfJsViewer');
     }
 
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        if (this.servoyApi.isInDesigner()) {
+            setTimeout(() => {
+                const iframe = this.elementRef.nativeElement.querySelector('iframe')
+                iframe.setAttribute('src', '/pdfjs/web/viewer.html');
+                iframe.removeAttribute('hidden');
+            }, 0);
+        }
+    }
+
     ngOnChanges(changes: SimpleChanges) {
         if (changes) {
             for (const entry of Object.entries(changes)) {
@@ -126,7 +137,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
      * @param newValues
      */
     updateIframeURL(newValues: any[]) {
-        if(!newValues[0]) {
+        if (!newValues[0]) {
             return;
         }
         const url = newValues.shift();
