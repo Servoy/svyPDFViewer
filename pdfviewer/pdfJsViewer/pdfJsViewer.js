@@ -89,7 +89,8 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 newValues = newValues.filter(function(item) {
                     return (item != null && item != '');
                 });
-                $scope.iframeURL = $sce.trustAsResourceUrl(url + '#' + newValues.join('&'));
+                if (newValues.length > 0)  url += '#' + newValues.join('&');
+                $scope.iframeURL = $sce.trustAsResourceUrl(url );
                 console.debug('Rendering iframe pdf with URL: ' + $scope.iframeURL);
             })
 
