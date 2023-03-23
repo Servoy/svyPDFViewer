@@ -4,7 +4,7 @@ import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChang
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
-            <ng2-pdfjs-viewer viewerFolder="/pdfjs" [pdfSrc]="iframeURL | safeURL"></ng2-pdfjs-viewer>
+            <ng2-pdfjs-viewer viewerFolder="pdfjs" [pdfSrc]="iframeURL | safeURL"></ng2-pdfjs-viewer>
         </div> `,
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
@@ -39,7 +39,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         if (this.servoyApi.isInDesigner()) {
             setTimeout(() => {
                 const iframe = this.elementRef.nativeElement.querySelector('iframe')
-                iframe.setAttribute('src', '/pdfjs/web/viewer.html');
+                iframe.setAttribute('src', 'pdfjs/web/viewer.html');
                 iframe.removeAttribute('hidden');
             }, 0);
         }
