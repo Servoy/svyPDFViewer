@@ -4,13 +4,14 @@ import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChang
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
-            <ng2-pdfjs-viewer viewerFolder="pdfjs" [pdfSrc]="iframeURL | safeURL"></ng2-pdfjs-viewer>
+            <ng2-pdfjs-viewer viewerFolder="pdfjs" [pdfSrc]="iframeURL | safeURL" #pdfViewer></ng2-pdfjs-viewer>
         </div> `,
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     @ViewChild('iframe', { read: ElementRef }) iframeElementRef: ElementRef;
-
+    @ViewChild('pdfViewer') pdfViewer;
+    
     @Input() documentURL: string;
     @Input() noCache: boolean;
     @Input() dataProviderID: any;
@@ -28,7 +29,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     pageNumberVar = '';
     iframeURL = '';
 
-    constructor(renderer: Renderer2, cdRef: ChangeDetectorRef,
+    constructor(renderer: Renderer2, protected cdRef: ChangeDetectorRef,
         private windowRef: WindowRefService, logFactory: LoggerFactory) {
         super(renderer, cdRef);
         this.log = logFactory.getLogger('SvyPdfJsViewer');
@@ -83,6 +84,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
             this.documentUrlVar += this.documentURL;
         } else {
+            this.iframeURL = 'pdfjs/web/viewer.html';
             return false;
         }
         this.updateIframeURL([this.documentUrlVar, this.pageNumberVar, this.zoomLevelVar, this.noCacheVar]);
@@ -144,6 +146,10 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         newValues = newValues.filter((item) => (item != null && item !== '')
         );
         this.iframeURL = url + '#' + newValues.join('&');
+        this.cdRef.detectChanges()
+        if (this.pdfViewer){
+            this.pdfViewer.refresh();
+        } 
         this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
     }
 
