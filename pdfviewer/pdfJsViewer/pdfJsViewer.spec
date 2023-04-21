@@ -26,11 +26,58 @@
         "size"          :   {"type": "dimension",  "default" : {"width":50, "height":50}}, 
         "pageNumber"    :   {"type": "int"},
         "tabSeq"        :   {"type" :"tabseq", "tags": { "scope" :"design" }},
-        "zoomLevel"     :   {"type": "string"}
+        "zoomLevel"     :   {"type": "string"},
+        "showToolbar"   :   {"type": "boolean", "default" : false},
+        "enableTooltips":   {"type": "boolean", "default" : false}
     },
     "api" : 
     {
+        "loadDocument" : {
+        	"parameters" : 	[
+        						{
+        							"name": "documentURL",
+        							"type": "string"
+        						},
+        						{
+        							"name": "values",
+        							"type": "object",
+        							"optional": true
+        						},
+        						{
+        							"name": "staticForm",
+        							"type": "boolean",
+        							"optional": true
+        						}
+        					],
+            "delayUntilFormLoads": true
+        },
         "reload" : {
+            "delayUntilFormLoads": true
+        },
+        "getFieldValues" : {
+            "delayUntilFormLoads": true,
+            "returns": "object"
+        },
+        "setFieldValues" : {
+            "parameters" : [
+                {"name" : "values", "type" : "object"},
+                {"name" : "timeout", "type" : "number", "optional" : true}
+            ],
+            "delayUntilFormLoads": true
+        },
+        "getFieldNames" : {
+            "delayUntilFormLoads": true,
+            "returns": "string[]"
+        },
+        "getControlIds" : {
+            "delayUntilFormLoads": true,
+            "returns": "string[]"
+        },
+        "setControlsVisibility" : {
+            "parameters" : [
+                {"name" : "ids", "type" : "string[]"},
+                {"name" : "visible", "type" : "boolean"}
+            ],
             "delayUntilFormLoads": true
         }
     }
