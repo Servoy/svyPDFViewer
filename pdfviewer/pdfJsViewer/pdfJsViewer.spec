@@ -5,6 +5,7 @@
     "version": 1,
     "icon": "pdfviewer/pdfJsViewer/icon.png",
     "definition": "pdfviewer/pdfJsViewer/pdfJsViewer.js",
+    "doc": "pdfviewer/pdfJsViewer/pdfJsViewer_doc.js",
     "libraries": [{"name":"pdfviewer-pdfjsviewer-css", "version":"1.0", "url":"pdfviewer/pdfJsViewer/pdfJsViewer.css", "mimetype":"text/css"}],
     "ng2Config": {
         "assets": [
