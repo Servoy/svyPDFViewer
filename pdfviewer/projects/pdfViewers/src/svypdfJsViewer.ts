@@ -1,5 +1,6 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
 import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
+import { PdfJsViewerComponent } from 'ng2-pdfjs-viewer';
 @Component({
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
@@ -9,9 +10,8 @@ import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChang
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
-    @ViewChild('iframe', { read: ElementRef }) iframeElementRef: ElementRef;
-    @ViewChild('pdfViewer') pdfViewer;
-    
+    @ViewChild('pdfViewer') pdfViewer: PdfJsViewerComponent;
+
     @Input() documentURL: string;
     @Input() noCache: boolean;
     @Input() dataProviderID: any;
@@ -39,7 +39,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         super.ngAfterViewInit();
         if (this.servoyApi.isInDesigner()) {
             setTimeout(() => {
-                const iframe = this.elementRef.nativeElement.querySelector('iframe')
+                const iframe = this.elementRef.nativeElement.querySelector('iframe');
                 iframe.setAttribute('src', 'pdfjs/web/viewer.html');
                 iframe.removeAttribute('hidden');
             }, 0);
@@ -66,6 +66,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                         case 'pageNumber':
                             this.setPageNumber();
                             break;
+                        case 'styleSheet':
                         case 'visible':
                             this.addCustomCSS();
                             break;
@@ -122,12 +123,13 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         // add custom CSS to the iframe
         if (this.styleSheet) {
             setTimeout(() => {
-                this.renderer.listen(this.iframeElementRef.nativeElement, 'load', () => {
+                this.renderer.listen(this.pdfViewer.iframe.nativeElement, 'load', () => {
                     const link = document.createElement('link');
-                    link.href = this.windowRef.nativeWindow.location.origin + '/' + this.styleSheet;
+                    const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
+                    link.href = serverURL + '/' + this.styleSheet;
                     link.rel = 'stylesheet';
                     link.type = 'text/css';
-                    frames[0].document.head.appendChild(link);
+                    (this.pdfViewer.iframe.nativeElement as HTMLIFrameElement).contentDocument.head.appendChild(link);
                 });
             });
         }
@@ -155,17 +157,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     reload() {
         setTimeout(() => {
-            const url = this.iframeElementRef.nativeElement.src;
-            this.renderer.setAttribute(this.iframeElementRef, 'src', 'about:blank');
+            const url = this.pdfViewer.iframe.nativeElement.src;
+            this.renderer.setAttribute(this.pdfViewer.iframe, 'src', 'about:blank');
             setTimeout(() => {
-                this.renderer.setAttribute(this.iframeElementRef, 'src', url);
+                this.renderer.setAttribute(this.pdfViewer.iframe, 'src', url);
             }, 5);
         });
     }
 
     onTabSequenceRequest() {
         setTimeout(() => {
-            this.iframeElementRef.nativeElement.contentWindow.focus();
+            this.pdfViewer.iframe.nativeElement.contentWindow.focus();
         });
     }
 }
