@@ -7,8 +7,7 @@
       "@angular/forms": "^15"
     },
     "dependencies": {
-      "tslib": "*",
-      "ng2-pdfjs-viewer": "^15"
+      "tslib": "*"
     },
     "license": "MIT",
     "repository": {

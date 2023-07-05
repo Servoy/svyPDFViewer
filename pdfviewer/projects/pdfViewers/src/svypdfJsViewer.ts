@@ -1,17 +1,17 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
 import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
+
 @Component({
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
-            <ng2-pdfjs-viewer viewerFolder="pdfjs" [pdfSrc]="iframeURL | safeURL" #pdfViewer></ng2-pdfjs-viewer>
+            <iframe #iframe [src]="iframeURL | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
         </div> `,
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     @ViewChild('iframe', { read: ElementRef }) iframeElementRef: ElementRef;
-    @ViewChild('pdfViewer') pdfViewer;
-    
+
     @Input() documentURL: string;
     @Input() noCache: boolean;
     @Input() dataProviderID: any;
@@ -21,6 +21,9 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     @Input() zoomLevel: string;
     @Input() pageNumber: number;
     @Input() styleSheet: string;
+    @Input() showToolbar: boolean;
+    @Input() enableTooltips: boolean;
+    @Input() fieldValues: { property: any };
 
     log: LoggerService;
     noCacheVar = '';
@@ -39,7 +42,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         super.ngAfterViewInit();
         if (this.servoyApi.isInDesigner()) {
             setTimeout(() => {
-                const iframe = this.elementRef.nativeElement.querySelector('iframe')
+                const iframe = this.iframeElementRef.nativeElement;
                 iframe.setAttribute('src', 'pdfjs/web/viewer.html');
                 iframe.removeAttribute('hidden');
             }, 0);
@@ -69,20 +72,53 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                         case 'visible':
                             this.addCustomCSS();
                             break;
+                        case 'showToolbar':
+                            this.onShowToolbarChanged();
+                            break;
+                        case 'enableTooltips':
+                            if (this.enableTooltips) this.enableTooltipsUI();
+                            else this.disableTooltips();
+                            break;
+                        case 'fieldValues':
+                            this.fillOutFormFields();
+                            break;
                     }
                 }
             }
         }
     }
 
+    documentLoaded() {
+        let viewer = this.iframeElementRef.nativeElement.contentWindow.PDFViewerApplication;
+        viewer.initializedPromise.then(() => {
+            this.onShowToolbarChanged();
+            viewer.eventBus.on("pagerendered", () => {
+                if (this.enableTooltips) this.enableTooltipsUI();
+                else this.disableTooltips();
+                this.fillOutFormFields();
+            })
+        });
+    }
+
+    getIframe() {
+        return this.iframeElementRef?.nativeElement;
+    }
+
+    getPDFDocument() {
+        const iframe = this.getIframe();
+        if (iframe)
+            return (iframe.contentWindow as any)?.PDFViewerApplication.pdfDocument;
+        return null;
+    }
+
     createBaseURL() {
-        this.documentUrlVar = '';
+        this.documentUrlVar = 'pdfjs/web/viewer.html';
         if (this.dataProviderID && this.dataProviderID.url) {
             const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
-            this.documentUrlVar += serverURL + '/' + encodeURIComponent(this.dataProviderID.url);
+            this.documentUrlVar += '?file=' + serverURL + '/' + encodeURIComponent(this.dataProviderID.url);
         } else if (this.documentURL) {
             // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
-            this.documentUrlVar += this.documentURL;
+            this.documentUrlVar += '?file=' + this.documentURL;
         } else {
             this.iframeURL = 'pdfjs/web/viewer.html';
             return false;
@@ -122,7 +158,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         // add custom CSS to the iframe
         if (this.styleSheet) {
             setTimeout(() => {
-                this.renderer.listen(this.iframeElementRef.nativeElement, 'load', () => {
+                this.renderer.listen(this.getIframe(), 'load', () => {
                     const link = document.createElement('link');
                     link.href = this.windowRef.nativeWindow.location.origin + '/' + this.styleSheet;
                     link.rel = 'stylesheet';
@@ -146,26 +182,189 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         newValues = newValues.filter((item) => (item != null && item !== '')
         );
         this.iframeURL = url + '#' + newValues.join('&');
-        this.cdRef.detectChanges()
-        if (this.pdfViewer){
-            this.pdfViewer.refresh();
-        } 
         this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
     }
 
     reload() {
         setTimeout(() => {
-            const url = this.iframeElementRef.nativeElement.src;
-            this.renderer.setAttribute(this.iframeElementRef, 'src', 'about:blank');
+            const iframe = this.getIframe();
+            const url = iframe.src;
+            this.renderer.setAttribute(iframe, 'src', 'about:blank');
             setTimeout(() => {
-                this.renderer.setAttribute(this.iframeElementRef, 'src', url);
+                this.renderer.setAttribute(iframe, 'src', url);
             }, 5);
+        });
+    }
+
+    onShowToolbarChanged() {
+        const iframe = this.getIframe();
+        if (iframe) {
+            let toolbar = iframe.contentWindow.document.getElementById("toolbarContainer");
+            if (toolbar) {
+                toolbar.style.display = this.showToolbar ? "inline" : "none";
+            }
+        }
+    }
+
+    async enableTooltipsUI() {
+        const iframe = this.getIframe();
+        if (!iframe) return;
+        const pdf = this.getPDFDocument()
+        if (!pdf) return;
+
+        let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
+        // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
+        let elementsMap = new Map()
+        for (let e = 0; e < elements.length; e++) {
+            let element = elements[e];
+            let name = (element.firstChild as HTMLFormElement).name;
+            elementsMap.set(name, element);
+        }
+
+        const annotations = await pdf.getFieldObjects();
+        for (let p = 1; p <= pdf.numPages; p++) {
+            let page = await pdf.getPage(p);
+            let pageAnnotations = await page.getAnnotations();
+
+            for (let a = 0; a < pageAnnotations.length; a++) {
+                let name = pageAnnotations[a].fieldName;
+                if (annotations[name] && elementsMap.get(name)) {
+                    let element = elementsMap.get(name);
+                    element.classList.add("tooltip");
+                    let x = iframe.contentWindow.document.createElement("SPAN");
+                    x.classList.add("tooltiptext");
+                    let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
+                    let t = iframe.contentWindow.document.createTextNode(tooltipText);
+                    x.appendChild(t);
+                    element.appendChild(x);
+                }
+            }
+        }
+    };
+
+    async disableTooltips() {
+        const iframe = this.getIframe();
+        if (!iframe) return;
+        const pdf = this.getPDFDocument()
+        if (!pdf) return;
+
+        let tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
+        while (tooltipTexts.length > 0) {
+            tooltipTexts[0].remove();
+        }
+
+        let annotations = iframe.contentWindow.document.getElementsByClassName('tooltip');
+        while (annotations.length > 0) {
+            annotations[0].classList.remove('tooltip');
+        }
+
+    }
+
+    async fillOutFormFields() {
+        if (!this.fieldValues) return;
+        const iframe = this.getIframe();
+        if (!iframe) return;
+        const pdf = this.getPDFDocument()
+        if (!pdf) return;
+
+        const annotationStorage = pdf.annotationStorage;
+        const fieldObjects = await pdf.getFieldObjects();
+
+        const fields = {};
+        Object.keys(fieldObjects).forEach((name) => {
+            let fieldObject = fieldObjects[name];
+            fields[fieldObject[0].name] = fieldObject[0].id;
+        });
+
+        Object.keys(this.fieldValues).forEach((key) => {
+            if (fields[key]) {
+                let id = fields[key];
+                let element = iframe.contentWindow.document.getElementById(id);
+                if (fieldObjects[key][0].type == 'text')
+                    (element as HTMLInputElement).value = this.fieldValues[key];
+                else if (fieldObjects[key][0].type == 'checkbox')
+                    (element as HTMLInputElement).checked = this.fieldValues[key];
+                else {
+                    console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
+                    return;
+                }
+                annotationStorage.setValue(fields[key], { value: this.fieldValues[key] });
+            }
+        });
+    }
+
+    public async getFieldValues() {
+        const pdf = this.getPDFDocument();
+        const annotationStorage = pdf.annotationStorage._storage;
+        const fieldValues = {};
+
+        const annotations = await pdf.getFieldObjects();
+        Object.keys(annotations).forEach((key) => {
+            let annotation = annotations[key][0];
+            if (annotation.name) {
+                let id = annotation.id
+                let value = null
+                if (annotationStorage.get(id)) {
+                    value = annotationStorage.get(id).value;
+                }
+
+                fieldValues[annotation.name] = value;
+            }
+        });
+
+        return fieldValues;
+    };
+
+    public async getFieldNames() {
+        const pdf = this.getPDFDocument();
+        if (!pdf) return null;
+
+        const fieldNames = [];
+        let annotations = await pdf.getFieldObjects();
+        Object.keys(annotations).forEach((key) => {
+            let annotation = annotations[key][0];
+            if (annotation.name) {
+                fieldNames.push(annotation.name);
+            }
+        });
+        return fieldNames;
+    };
+
+    public getToolbarControlIds(): Array<string> {
+        const iframe = this.getIframe();
+        const pdf = this.getPDFDocument();
+        if (!pdf) {
+            return null;
+        }
+
+        let toolbarViewer = iframe.contentWindow.document.getElementById('toolbarViewer');
+        let toolbarSections = toolbarViewer.children;
+        let controls = [];
+        for (let i = 0; i < toolbarSections.length; i++) {
+            controls = controls.concat(Array.from(toolbarSections[i].children));
+        }
+        let ids = new Array();
+        for (let i = 0; i < controls.length; i++) {
+            if (controls[i].id) {
+                ids.push(controls[i].id);
+            }
+        }
+        return ids;
+    }
+
+    public setToolbarControlsVisibility(ids: Array<string>, visible: boolean) {
+        const iframe = this.getIframe();
+        ids.forEach((id) => {
+            let element = iframe.contentWindow.document.getElementById(id);
+            if (element) {
+                element.hidden = !visible;
+            }
         });
     }
 
     onTabSequenceRequest() {
         setTimeout(() => {
-            this.iframeElementRef.nativeElement.contentWindow.focus();
+            this.getIframe().contentWindow.focus();
         });
     }
 }

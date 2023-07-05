@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ServoyPublicModule } from '@servoy/public';
-import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 import { SafePipe } from './safePipe';
 import { SafeURLPipe } from './safeURLPipe';
 import { SvyPdfJsViewer } from './svypdfJsViewer';
@@ -17,8 +16,7 @@ import { SvyPDFViewer } from './svypdfviewer';
     providers: [],
     imports: [
         CommonModule,
-        ServoyPublicModule,
-        PdfJsViewerModule
+        ServoyPublicModule
     ],
     exports: [
         SvyPDFViewer,
