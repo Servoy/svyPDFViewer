@@ -91,7 +91,8 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                         var iframe = $element.find("iframe")[0];
                         $(iframe).on('load', function (event) {
                             var link = document.createElement("link");
-                            link.href = window.location.origin + '/' + $scope.model.styleSheet;
+                            var serverUrl = window.location.href.split('/solutions/')[0];
+                            link.href = serverUrl + '/' + $scope.model.styleSheet;
                             link.rel = "stylesheet";
                             link.type = "text/css";
                             frames[0].document.head.appendChild(link);

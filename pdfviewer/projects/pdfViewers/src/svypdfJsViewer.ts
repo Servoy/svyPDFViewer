@@ -69,6 +69,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                         case 'pageNumber':
                             this.setPageNumber();
                             break;
+                        case 'styleSheet':
                         case 'visible':
                             this.addCustomCSS();
                             break;
@@ -160,10 +161,11 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             setTimeout(() => {
                 this.renderer.listen(this.getIframe(), 'load', () => {
                     const link = document.createElement('link');
-                    link.href = this.windowRef.nativeWindow.location.origin + '/' + this.styleSheet;
+                    const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
+                    link.href = serverURL + '/' + this.styleSheet;
                     link.rel = 'stylesheet';
                     link.type = 'text/css';
-                    frames[0].document.head.appendChild(link);
+                    (this.getIframe() as HTMLIFrameElement).contentDocument.head.appendChild(link);
                 });
             });
         }
