@@ -93,7 +93,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         let viewer = this.iframeElementRef.nativeElement.contentWindow.PDFViewerApplication;
         viewer.initializedPromise.then(() => {
             this.onShowToolbarChanged();
-            viewer.eventBus.on("pagerendered", () => {
+            viewer.eventBus.on("textlayerrendered", () => {
                 if (this.enableTooltips) this.enableTooltipsUI();
                 else this.disableTooltips();
                 this.fillOutFormFields();
@@ -280,15 +280,16 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
         Object.keys(this.fieldValues).forEach((key) => {
             if (fields[key]) {
-                let id = fields[key];
-                let element = iframe.contentWindow.document.getElementById(id);
-                if (fieldObjects[key][0].type == 'text')
-                    (element as HTMLInputElement).value = this.fieldValues[key];
-                else if (fieldObjects[key][0].type == 'checkbox')
-                    (element as HTMLInputElement).checked = this.fieldValues[key];
-                else {
-                    console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
-                    return;
+                let element = iframe.contentWindow.document.getElementsByName(key)[0];
+                if (element) {
+                    if (fieldObjects[key][0].type == 'text')
+                        (element as HTMLInputElement).value = this.fieldValues[key];
+                    else if (fieldObjects[key][0].type == 'checkbox')
+                        (element as HTMLInputElement).checked = this.fieldValues[key];
+                    else {
+                        console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
+                        return;
+                    }
                 }
                 annotationStorage.setValue(fields[key], { value: this.fieldValues[key] });
             }
@@ -297,7 +298,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     public async getFieldValues() {
         const pdf = this.getPDFDocument();
-        const annotationStorage = pdf.annotationStorage._storage;
+        const annotationStorage = pdf.annotationStorage;
         const fieldValues = {};
 
         const annotations = await pdf.getFieldObjects();
@@ -306,8 +307,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             if (annotation.name) {
                 let id = annotation.id
                 let value = null
-                if (annotationStorage.get(id)) {
-                    value = annotationStorage.get(id).value;
+                if (annotationStorage.getRawValue(id)) {
+                    value = annotationStorage.getRawValue(id).value;
                 }
 
                 fieldValues[annotation.name] = value;
@@ -334,12 +335,13 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     public getToolbarControlIds(): Array<string> {
         const iframe = this.getIframe();
-        const pdf = this.getPDFDocument();
-        if (!pdf) {
+        if (!iframe) {
             return null;
         }
 
         let toolbarViewer = iframe.contentWindow.document.getElementById('toolbarViewer');
+        if (!toolbarViewer)
+            return null;
         let toolbarSections = toolbarViewer.children;
         let controls = [];
         for (let i = 0; i < toolbarSections.length; i++) {

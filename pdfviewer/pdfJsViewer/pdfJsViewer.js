@@ -203,7 +203,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.api.getFieldValues = async () => {
                 const iframe = $element.find("iframe")[0];
                 const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
-                const annotationStorage = pdf.annotationStorage._storage;
+                const annotationStorage = pdf.annotationStorage;
                 const fieldValues = {};
 
                 const annotations = await pdf.getFieldObjects();
@@ -212,8 +212,8 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     if (annotation.name) {
                         let id = annotation.id
                         let value = null
-                        if (annotationStorage.get(id)) {
-                            value = annotationStorage.get(id).value;
+                        if (annotationStorage.getValue(id)) {
+                            value = annotationStorage.getValue(id).value;
                         }
 
                         fieldValues[annotation.name] = value;
@@ -242,12 +242,13 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
 
             $scope.api.getToolbarControlIds = function () {
                 const iframe = $element.find("iframe")[0];
-                const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
-                if (!pdf) {
-                    return;
+                if (!iframe) {
+                    return null;
                 }
 
                 let toolbarViewer = iframe.contentWindow.document.getElementById('toolbarViewer');
+                if (!toolbarViewer)
+                    return null;
                 let toolbarSections = toolbarViewer.children;
                 let controls = [];
                 for (let i = 0; i < toolbarSections.length; i++) {
