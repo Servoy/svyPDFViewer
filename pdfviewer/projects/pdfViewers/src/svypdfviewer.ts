@@ -95,9 +95,9 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
     reload() {
         setTimeout(() => {
             const url = this.iframeElementRef.nativeElement.src;
-            this.renderer.setAttribute(this.iframeElementRef, 'src', 'about:blank');
+            this.renderer.setAttribute(this.iframeElementRef.nativeElement, 'src', 'about:blank');
             setTimeout(() => {
-                this.renderer.setAttribute(this.iframeElementRef, 'src', url);
+                this.renderer.setAttribute(this.iframeElementRef.nativeElement, 'src', url);
             }, 5);
         });
     }
