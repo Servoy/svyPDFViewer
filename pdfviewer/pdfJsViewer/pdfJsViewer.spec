@@ -31,7 +31,7 @@
         "zoomLevel"     :   {"type": "string"},
         "showToolbar"   :   {"type": "boolean", "default" : true},
         "enableTooltips":   {"type": "boolean", "default" : false},
-        "fieldValues"   :   {"type" :"map", "tags": { "scope" :"private" }},
+        "fieldValues"   :   {"type" :"map", "tags": { "scope" :"private" }}
     },
     "api" : 
     {

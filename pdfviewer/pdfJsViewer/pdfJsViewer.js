@@ -19,7 +19,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.renderFinished = function() {
                 var iframe = $element.find("iframe")[0];
                 $(iframe).on('load', function () {
-                    let viewer = iframe.contentWindow.PDFViewerApplication;
+                    var viewer = iframe.contentWindow.PDFViewerApplication;
                     viewer.initializedPromise.then(() => {
                         if ($scope.showToolbar !== $scope.model.showToolbar) {
                             onShowToolbarChanged();
