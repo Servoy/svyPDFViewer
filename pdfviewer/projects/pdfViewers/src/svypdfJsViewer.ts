@@ -90,8 +90,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     documentLoaded() {
-        let viewer = this.iframeElementRef.nativeElement.contentWindow.PDFViewerApplication;
-        viewer.initializedPromise.then(() => {
+        const viewer = this.iframeElementRef?.nativeElement?.contentWindow?.PDFViewerApplication;
+        if (viewer) viewer.initializedPromise.then(() => {
             this.onShowToolbarChanged();
             viewer.eventBus.on("textlayerrendered", () => {
                 if (this.enableTooltips) this.enableTooltipsUI();
