@@ -118,7 +118,12 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 if (!iframe) return;
                 const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
                 if (!pdf ) return;
-
+                
+                const tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
+                if (tooltipTexts.length > 0) {
+                   return;
+                }
+                
                 let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
                 // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
                 let elementsMap = new Map()
@@ -176,26 +181,23 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 
                 const annotationStorage = pdf.annotationStorage;
                 const fieldObjects = await pdf.getFieldObjects();
-
-                const fields = {};
-                Object.keys(fieldObjects).forEach((name) => {
-                    let fieldObject = fieldObjects[name];
-                    fields[fieldObject[0].name] = fieldObject[0].id;
-                });
+                if (!fieldObjects) return;
 
                 Object.keys($scope.model.fieldValues).forEach((key) => {
-                    if (fields[key]) {
-                        let id = fields[key];
+                    if (fieldObjects[key]) {
+                        let id = fieldObjects[key][0].id;
                         let element = iframe.contentWindow.document.getElementById(id);
-                        if (fieldObjects[key][0].type == 'text')
-                            element.value = $scope.model.fieldValues[key];
-                        else if (fieldObjects[key][0].type == 'checkbox')
-                            element.checked = $scope.model.fieldValues[key];
-                        else {
-                            console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
-                            return;
+                        if (element) {
+                            if (fieldObjects[key][0].type == 'text')
+                                element.value = $scope.model.fieldValues[key];
+                            else if (fieldObjects[key][0].type == 'checkbox')
+                                element.checked = $scope.model.fieldValues[key];
+                            else {
+                                console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
+                                return;
+                            }
                         }
-                        annotationStorage.setValue(fields[key], { value: $scope.model.fieldValues[key] });
+                        annotationStorage.setValue(id, { value: $scope.model.fieldValues[key] });
                     }
                 });
             }
@@ -216,7 +218,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                             value = annotationStorage.getValue(id).value;
                         }
 
-                        fieldValues[annotation.name] = value;
+                        fieldValues[key] = value;
                     }
                 });
 
@@ -234,7 +236,9 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 Object.keys(annotations).forEach((key) => {
                     let annotation = annotations[key][0];
                     if (annotation.name) {
-                        fieldNames.push(annotation.name);
+                        // which is correct version?
+                        //fieldNames.push(annotation.name);
+                        fieldNames.push(key);
                     }
                 });
                 return fieldNames;
@@ -276,7 +280,21 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     }
                 });
             }
-
+            
+            $scope.api.setFieldControlsVisibility = function (names, visible) {
+                const iframe = $element.find("iframe")[0];
+                const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
+                if (!pdf) {
+                    return;
+                }
+                names.forEach((name) => {
+                    let element = iframe.contentWindow.document.getElementsByName(name);
+                    if (element && element.length) {
+                        element[0].hidden = !visible;
+                    }
+                });
+            }
+            
             $scope.$watch('[documentURL, pageNumber, zoomLevel, noCache]', function (newValues, oldValues, scope) {
                 if (!newValues[0]) {
                     return

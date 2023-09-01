@@ -213,7 +213,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         if (!iframe) return;
         const pdf = this.getPDFDocument()
         if (!pdf) return;
-
+        
+        let tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
+        if (tooltipTexts.length > 0) {
+            return;
+        }
+        
         let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
         // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
         let elementsMap = new Map()
@@ -271,11 +276,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
         const annotationStorage = pdf.annotationStorage;
         const fieldObjects = await pdf.getFieldObjects();
-
+        
+        if (!fieldObjects) return;
         const fields = {};
         Object.keys(fieldObjects).forEach((name) => {
             let fieldObject = fieldObjects[name];
-            fields[fieldObject[0].name] = fieldObject[0].id;
+            fields[name] = fieldObject[0].id;
         });
 
         Object.keys(this.fieldValues).forEach((key) => {
@@ -311,7 +317,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                     value = annotationStorage.getRawValue(id).value;
                 }
 
-                fieldValues[annotation.name] = value;
+                fieldValues[key] = value;
             }
         });
 
@@ -327,7 +333,9 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         Object.keys(annotations).forEach((key) => {
             let annotation = annotations[key][0];
             if (annotation.name) {
-                fieldNames.push(annotation.name);
+                //fieldNames.push(annotation.name);
+                // why key and name are sometimes different? which is the correct one
+                fieldNames.push(key)
             }
         });
         return fieldNames;
@@ -365,7 +373,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             }
         });
     }
-
+    
+    public setFieldControlsVisibility(names: Array<string>, visible: boolean) {
+        const iframe = this.getIframe();
+        names.forEach((name) => {
+            let element = iframe.contentWindow.document.getElementsByName(name);
+            if (element && element.length) {
+                element[0].hidden = !visible;
+            }
+        });
+    }
+    
     onTabSequenceRequest() {
         setTimeout(() => {
             this.getIframe().contentWindow.focus();

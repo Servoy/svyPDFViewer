@@ -58,6 +58,13 @@
                 {"name" : "visible", "type" : "boolean"}
             ],
             "delayUntilFormLoads": true
+        },
+        "setFieldControlsVisibility" : {
+            "parameters" : [
+                {"name" : "names", "type" : "string[]"},
+                {"name" : "visible", "type" : "boolean"}
+            ],
+            "delayUntilFormLoads": true
         }
     }
 }
