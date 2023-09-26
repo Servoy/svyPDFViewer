@@ -1256,11 +1256,11 @@ const PDFViewerApplication = {
       annotationStorage
     } = pdfDocument;
     annotationStorage.onSetModified = () => {
-      window.addEventListener("beforeunload", beforeUnload);
+      //window.addEventListener("beforeunload", beforeUnload);
       this._annotationStorageModified = true;
     };
     annotationStorage.onResetModified = () => {
-      window.removeEventListener("beforeunload", beforeUnload);
+      //window.removeEventListener("beforeunload", beforeUnload);
       delete this._annotationStorageModified;
     };
     annotationStorage.onAnnotationEditor = typeStr => {
@@ -5705,7 +5705,7 @@ function getCharacterType(charCode) {
 }
 let NormalizeWithNFKC;
 function getNormalizeWithNFKC() {
-  NormalizeWithNFKC ||= ` ¨ª¯²-µ¸-º¼-¾Ĳ-ĳĿ-ŀŉſǄ-ǌǱ-ǳʰ-ʸ˘-˝ˠ-ˤʹͺ;΄-΅·ϐ-ϖϰ-ϲϴ-ϵϹևٵ-ٸक़-य़ড়-ঢ়য়ਲ਼ਸ਼ਖ਼-ਜ਼ਫ਼ଡ଼-ଢ଼ำຳໜ-ໝ༌གྷཌྷདྷབྷཛྷཀྵჼᴬ-ᴮᴰ-ᴺᴼ-ᵍᵏ-ᵪᵸᶛ-ᶿẚ-ẛάέήίόύώΆ᾽-῁ΈΉ῍-῏ΐΊ῝-῟ΰΎ῭-`ΌΏ´-῾ - ‑‗․-… ″-‴‶-‷‼‾⁇-⁉⁗ ⁰-ⁱ⁴-₎ₐ-ₜ₨℀-℃℅-ℇ℉-ℓℕ-№ℙ-ℝ℠-™ℤΩℨK-ℭℯ-ℱℳ-ℹ℻-⅀ⅅ-ⅉ⅐-ⅿ↉∬-∭∯-∰〈-〉①-⓪⨌⩴-⩶⫝̸ⱼ-ⱽⵯ⺟⻳⼀-⿕　〶〸-〺゛-゜ゟヿㄱ-ㆎ㆒-㆟㈀-㈞㈠-㉇㉐-㉾㊀-㏿ꚜ-ꚝꝰꟲ-ꟴꟸ-ꟹꭜ-ꭟꭩ豈-嗀塚晴凞-羽蘒諸逸-都飯-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-זּטּ-לּמּנּ-סּףּ-פּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-﷼︐-︙︰-﹄﹇-﹒﹔-﹦﹨-﹫ﹰ-ﹲﹴﹶ-ﻼ！-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ￠-￦`;
+  NormalizeWithNFKC ||= `Â Â¨ÂªÂ¯Â²-ÂµÂ¸-ÂºÂ¼-Â¾Ä²-Ä³Ä¿-Å€Å‰Å¿Ç„-ÇŒÇ±-Ç³Ê°-Ê¸Ë˜-Ë�Ë -Ë¤Í´ÍºÍ¾Î„-Î…Î‡Ï�-Ï–Ï°-Ï²Ï´-ÏµÏ¹Ö‡Ùµ-Ù¸à¥˜-à¥Ÿà§œ-à§�à§Ÿà¨³à¨¶à©™-à©›à©žà­œ-à­�à¸³àº³à»œ-à»�à¼Œà½ƒà½�à½’à½—à½œà½©áƒ¼á´¬-á´®á´°-á´ºá´¼-áµ�áµ�-áµªáµ¸á¶›-á¶¿áºš-áº›á½±á½³á½µá½·á½¹á½»á½½á¾»á¾½-á¿�á¿‰á¿‹á¿�-á¿�á¿“á¿›á¿�-á¿Ÿá¿£á¿«á¿­-á¿¯á¿¹á¿»á¿½-á¿¾â€€-â€Šâ€‘â€—â€¤-â€¦â€¯â€³-â€´â€¶-â€·â€¼â€¾â�‡-â�‰â�—â�Ÿâ�°-â�±â�´-â‚Žâ‚�-â‚œâ‚¨â„€-â„ƒâ„…-â„‡â„‰-â„“â„•-â„–â„™-â„�â„ -â„¢â„¤â„¦â„¨â„ª-â„­â„¯-â„±â„³-â„¹â„»-â…€â……-â…‰â…�-â…¿â†‰âˆ¬-âˆ­âˆ¯-âˆ°âŒ©-âŒªâ‘ -â“ªâ¨Œâ©´-â©¶â«œâ±¼-â±½âµ¯âºŸâ»³â¼€-â¿•ã€€ã€¶ã€¸-ã€ºã‚›-ã‚œã‚Ÿãƒ¿ã„±-ã†Žã†’-ã†Ÿãˆ€-ãˆžãˆ -ã‰‡ã‰�-ã‰¾ãŠ€-ã�¿êšœ-êš�ê�°êŸ²-êŸ´êŸ¸-êŸ¹ê­œ-ê­Ÿê­©ï¤€-ï¨�ï¨�ï¨’ï¨•-ï¨žï¨ ï¨¢ï¨¥-ï¨¦ï¨ª-ï©­ï©°-ï«™ï¬€-ï¬†ï¬“-ï¬—ï¬�ï¬Ÿ-ï¬¶ï¬¸-ï¬¼ï¬¾ï­€-ï­�ï­ƒ-ï­„ï­†-ï®±ï¯“-ï´½ïµ�-ï¶�ï¶’-ï·‡ï·°-ï·¼ï¸�-ï¸™ï¸°-ï¹„ï¹‡-ï¹’ï¹”-ï¹¦ï¹¨-ï¹«ï¹°-ï¹²ï¹´ï¹¶-ï»¼ï¼�-ï¾¾ï¿‚-ï¿‡ï¿Š-ï¿�ï¿’-ï¿—ï¿š-ï¿œï¿ -ï¿¦`;
   return NormalizeWithNFKC;
 }
 
@@ -9804,8 +9804,8 @@ const DEFAULT_L10N_STRINGS = {
   document_properties_page_size_name_a4: "A4",
   document_properties_page_size_name_letter: "Letter",
   document_properties_page_size_name_legal: "Legal",
-  document_properties_page_size_dimension_string: "{{width}} × {{height}} {{unit}} ({{orientation}})",
-  document_properties_page_size_dimension_name_string: "{{width}} × {{height}} {{unit}} ({{name}}, {{orientation}})",
+  document_properties_page_size_dimension_string: "{{width}} Ã— {{height}} {{unit}} ({{orientation}})",
+  document_properties_page_size_dimension_name_string: "{{width}} Ã— {{height}} {{unit}} ({{name}}, {{orientation}})",
   document_properties_linearized_yes: "Yes",
   document_properties_linearized_no: "No",
   additional_layers: "Additional Layers",
@@ -9833,7 +9833,7 @@ const DEFAULT_L10N_STRINGS = {
   printing_not_supported: "Warning: Printing is not fully supported by this browser.",
   printing_not_ready: "Warning: The PDF is not fully loaded for printing.",
   web_fonts_disabled: "Web fonts are disabled: unable to use embedded PDF fonts.",
-  free_text2_default_content: "Start typing…",
+  free_text2_default_content: "Start typingâ€¦",
   editor_free_text2_aria_label: "Text Editor",
   editor_ink2_aria_label: "Draw Editor",
   editor_ink_canvas_aria_label: "User-created image"
