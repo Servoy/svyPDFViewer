@@ -10,7 +10,7 @@
     "model":
     {
         "documentURL"   : {"type" : "string"},
-        "dataProviderID": {"type":"dataprovider", "tags": { "scope" :"design" }},
+        "dataProviderID": {"type":"dataprovider", "tags": { "wizard": true, "scope" :"design" }},
         "styleClass"    : {"type" :"styleclass", "tags": { "scope" :"design" }},
         "noCache"       : {"type" : "boolean"},
         "visible"       : {"type": "visible" },
