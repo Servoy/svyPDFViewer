@@ -20,6 +20,7 @@
         {"version":"2022.3.1","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2022.3.1/pdfviewer.zip", "servoy-version":"2022.3"},
         {"version":"2022.9.0","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2022.9.0/pdfviewer.zip", "servoy-version":"2022.9"},
         {"version":"2023.3.0","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2023.3.0/pdfviewer.zip", "servoy-version":"2023.3"},
-        {"version":"2023.6.0","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2023.6.0/pdfviewer.zip", "servoy-version":"2023.3"}
+        {"version":"2023.6.0","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2023.6.0/pdfviewer.zip", "servoy-version":"2023.3 - 2023.6.x"},
+        {"version":"2023.6.1","url":"https://github.com/Servoy/svyPDFViewer/releases/download/v2023.6.1/pdfviewer.zip", "servoy-version":"2023.3 - 2023.6.x"}
     ]
 }
