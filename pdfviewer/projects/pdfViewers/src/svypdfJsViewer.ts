@@ -24,6 +24,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     @Input() showToolbar: boolean;
     @Input() enableTooltips: boolean;
     @Input() fieldValues: { property: any };
+    @Input() toolbarControlsVisibility: { property: boolean };
+    @Input() fieldControlsVisibility: { property: boolean };
 
     log: LoggerService;
     noCacheVar = '';
@@ -83,6 +85,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                         case 'fieldValues':
                             this.fillOutFormFields();
                             break;
+                        case 'toolbarControlsVisibility':
+                            this.hideToolbarControls();
+                            break;
+                        case 'fieldControlsVisibility':
+                            this.hideFieldControls();
+                            break;
                     }
                 }
             }
@@ -93,10 +101,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const viewer = this.iframeElementRef?.nativeElement?.contentWindow?.PDFViewerApplication;
         if (viewer) viewer.initializedPromise.then(() => {
             this.onShowToolbarChanged();
+            this.hideToolbarControls();
             viewer.eventBus.on("textlayerrendered", () => {
                 if (this.enableTooltips) this.enableTooltipsUI();
                 else this.disableTooltips();
                 this.fillOutFormFields();
+                this.hideFieldControls();
             })
         });
     }
@@ -207,18 +217,41 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             }
         }
     }
+    hideToolbarControls() {
+        if (!this.toolbarControlsVisibility) return;
+        const iframe = this.getIframe();
+        if (!iframe) return;
+        Object.keys(this.toolbarControlsVisibility).forEach((id) => {
+            const element = iframe.contentWindow.document.getElementById(id);
+            if (element) {
+                element.hidden = !this.toolbarControlsVisibility[id];
+            }
+        });
+    }
 
+    hideFieldControls() {
+        if (!this.fieldControlsVisibility) return;
+        const iframe = this.getIframe();
+        if (!iframe) return;
+        Object.keys(this.fieldControlsVisibility).forEach((name) => {
+            const element = iframe.contentWindow.document.getElementsByName(name);
+            if (element && element.length) {
+                element[0].hidden = !this.fieldControlsVisibility[name];
+            }
+        });
+    }
+    
     async enableTooltipsUI() {
         const iframe = this.getIframe();
         if (!iframe) return;
         const pdf = this.getPDFDocument()
         if (!pdf) return;
-        
+
         let tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
         if (tooltipTexts.length > 0) {
             return;
         }
-        
+
         let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
         // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
         let elementsMap = new Map()
@@ -276,7 +309,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
         const annotationStorage = pdf.annotationStorage;
         const fieldObjects = await pdf.getFieldObjects();
-        
+
         if (!fieldObjects) return;
         const fields = {};
         Object.keys(fieldObjects).forEach((name) => {
@@ -364,26 +397,6 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         return ids;
     }
 
-    public setToolbarControlsVisibility(ids: Array<string>, visible: boolean) {
-        const iframe = this.getIframe();
-        ids.forEach((id) => {
-            let element = iframe.contentWindow.document.getElementById(id);
-            if (element) {
-                element.hidden = !visible;
-            }
-        });
-    }
-    
-    public setFieldControlsVisibility(names: Array<string>, visible: boolean) {
-        const iframe = this.getIframe();
-        names.forEach((name) => {
-            let element = iframe.contentWindow.document.getElementsByName(name);
-            if (element && element.length) {
-                element[0].hidden = !visible;
-            }
-        });
-    }
-    
     onTabSequenceRequest() {
         setTimeout(() => {
             this.getIframe().contentWindow.focus();

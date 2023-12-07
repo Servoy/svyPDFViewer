@@ -1,11 +1,11 @@
-angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsViewer', function () {
+angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsViewer', function() {
     return {
         restrict: 'E',
         scope: {
             model: '=svyModel',
             api: "=svyApi"
         },
-        link: function ($scope, $element, $attrs) {
+        link: function($scope, $element, $attrs) {
             $scope.iframeURL = '';
             $scope.documentURL = '';
             $scope.pageNumber = '';
@@ -14,32 +14,34 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
             $scope.showToolbar = '';
             $scope.viewerState = '';
         },
-        controller: function ($scope, $element, $timeout, $sce) {
-            
+        controller: function($scope, $element, $timeout, $sce) {
+
             $scope.renderFinished = function() {
                 var iframe = $element.find("iframe")[0];
-                $(iframe).on('load', function () {
+                $(iframe).on('load', function() {
                     var viewer = iframe.contentWindow.PDFViewerApplication;
                     viewer.initializedPromise.then(() => {
                         if ($scope.showToolbar !== $scope.model.showToolbar) {
                             onShowToolbarChanged();
                         }
+                        hideToolbarControls();
                         viewer.eventBus.on("pagerendered", () => {
                             if ($scope.model.enableTooltips) enableTooltips();
                             else disableTooltips();
                             fillOutFormFields();
+                            hideFieldControls();
                         })
                     });
                 });
             }
-                    
+
             // reload doc
-            $scope.api.reload = function () {
-                $timeout(function () {
+            $scope.api.reload = function() {
+                $timeout(function() {
                     var iframe = $element.find("iframe")[0];
                     var url = iframe.src;
                     iframe.src = 'about:blank';
-                    $timeout(function () {
+                    $timeout(function() {
                         iframe.src = url;
                     }, 5);
                 });
@@ -87,9 +89,9 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 // add custom CSS to the iframe
                 if ($scope.model.styleSheet) {
                     // wait for the markup id
-                    $timeout(function () {
+                    $timeout(function() {
                         var iframe = $element.find("iframe")[0];
-                        $(iframe).on('load', function (event) {
+                        $(iframe).on('load', function(event) {
                             var link = document.createElement("link");
                             var serverUrl = window.location.href.split('/solutions/')[0];
                             link.href = serverUrl + '/' + $scope.model.styleSheet;
@@ -106,7 +108,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 let iframe = $element.find("iframe")[0];
                 if (iframe != null) {
                     let toolbar = iframe.contentWindow.document.getElementById("toolbarContainer");
-                    if (toolbar){
+                    if (toolbar) {
                         toolbar.style.display = $scope.model.showToolbar ? "inline" : "none";
                         $scope.showToolbar = $scope.model.showToolbar
                     }
@@ -117,13 +119,13 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 const iframe = $element.find("iframe")[0];
                 if (!iframe) return;
                 const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
-                if (!pdf ) return;
-                
+                if (!pdf) return;
+
                 const tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
                 if (tooltipTexts.length > 0) {
-                   return;
+                    return;
                 }
-                
+
                 let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
                 // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
                 let elementsMap = new Map()
@@ -178,7 +180,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 if (!iframe) return;
                 let pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
                 if (!pdf) return;
-                
+
                 const annotationStorage = pdf.annotationStorage;
                 const fieldObjects = await pdf.getFieldObjects();
                 if (!fieldObjects) return;
@@ -201,7 +203,38 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     }
                 });
             }
-            
+
+            function hideToolbarControls() {
+                if ($scope.model.toolbarControlsVisibility) {
+                    const iframe = $element.find("iframe")[0];
+                    if (!iframe) {
+                        return;
+                    }
+                    Object.keys($scope.model.toolbarControlsVisibility).forEach((id) => {
+                        let element = iframe.contentWindow.document.getElementById(id);
+                        if (element) {
+                            element.hidden = !$scope.model.toolbarControlsVisibility[id];
+                        }
+                    });
+                }
+            }
+
+            function hideFieldControls() {
+                if ($scope.model.fieldControlsVisibility) {
+                    const iframe = $element.find("iframe")[0];
+                    const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
+                    if (!pdf) {
+                        return;
+                    }
+                    Object.keys($scope.model.fieldControlsVisibility).forEach((name) => {
+                        let element = iframe.contentWindow.document.getElementsByName(name);
+                        if (element && element.length) {
+                            element[0].hidden = !$scope.model.fieldControlsVisibility[name];
+                        }
+                    });
+                }
+            }
+
             $scope.api.getFieldValues = async () => {
                 const iframe = $element.find("iframe")[0];
                 const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
@@ -230,7 +263,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 if (!iframe) return null;
                 const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
                 if (!pdf) return null;
-                
+
                 const fieldNames = [];
                 let annotations = await pdf.getFieldObjects();
                 Object.keys(annotations).forEach((key) => {
@@ -244,7 +277,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 return fieldNames;
             };
 
-            $scope.api.getToolbarControlIds = function () {
+            $scope.api.getToolbarControlIds = function() {
                 const iframe = $element.find("iframe")[0];
                 if (!iframe) {
                     return null;
@@ -267,41 +300,13 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 return ids;
             }
 
-            $scope.api.setToolbarControlsVisibility = function (ids, visible) {
-                const iframe = $element.find("iframe")[0];
-                const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
-                if (!pdf) {
-                    return;
-                }
-                ids.forEach((id) => {
-                    let element = iframe.contentWindow.document.getElementById(id);
-                    if (element) {
-                        element.hidden = !visible;
-                    }
-                });
-            }
-            
-            $scope.api.setFieldControlsVisibility = function (names, visible) {
-                const iframe = $element.find("iframe")[0];
-                const pdf = iframe.contentWindow.PDFViewerApplication.pdfDocument;
-                if (!pdf) {
-                    return;
-                }
-                names.forEach((name) => {
-                    let element = iframe.contentWindow.document.getElementsByName(name);
-                    if (element && element.length) {
-                        element[0].hidden = !visible;
-                    }
-                });
-            }
-            
-            $scope.$watch('[documentURL, pageNumber, zoomLevel, noCache]', function (newValues, oldValues, scope) {
+            $scope.$watch('[documentURL, pageNumber, zoomLevel, noCache]', function(newValues, oldValues, scope) {
                 if (!newValues[0]) {
                     return
                 }
 
                 var url = newValues.shift();
-                newValues = newValues.filter(function (item) {
+                newValues = newValues.filter(function(item) {
                     return (item != null && item != '');
                 });
                 if (newValues.length > 0) url += '#' + newValues.join('&');
@@ -309,51 +314,59 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 console.debug('Rendering iframe pdf with URL: ' + $scope.iframeURL);
             })
 
-            $scope.$watch('model.noCache', function (newValue, oldValue) {
+            $scope.$watch('model.noCache', function(newValue, oldValue) {
                 noCache();
             });
 
-            $scope.$watch('model.zoomLevel', function (newValue, oldValue) {
+            $scope.$watch('model.zoomLevel', function(newValue, oldValue) {
                 zoomLevel();
             });
 
-            $scope.$watch('model.pageNumber', function (newValue, oldValue) {
+            $scope.$watch('model.pageNumber', function(newValue, oldValue) {
                 setPageNumer();
             });
             // watch doc url
-            $scope.$watch('model.documentURL', function (newValue, oldValue) {
+            $scope.$watch('model.documentURL', function(newValue, oldValue) {
                 const iframe = $element.find("iframe")[0];
                 if (iframe == null) $scope.viewerState = 0;
                 else $scope.viewerState = 1;
                 createBaseURL();
             });
 
-            $scope.$watch('model.dataProviderID', function (newValue, oldValue) {
+            $scope.$watch('model.dataProviderID', function(newValue, oldValue) {
                 const iframe = $element.find("iframe")[0];
                 if (iframe == null) $scope.viewerState = 0;
                 else $scope.viewerState = 1;
                 createBaseURL();
             });
 
-            $scope.$watch('model.visible', function (newValue, oldValue) {
+            $scope.$watch('model.visible', function(newValue, oldValue) {
                 addCustomCSS();
             });
 
-            $scope.$watch('model.showToolbar', function (newValue, oldValue) {
+            $scope.$watch('model.showToolbar', function(newValue, oldValue) {
                 onShowToolbarChanged()
             });
 
-            $scope.$watch('model.enableTooltips', function (newValue, oldValue) {
+            $scope.$watch('model.enableTooltips', function(newValue, oldValue) {
                 if (newValue) enableTooltips();
                 else disableTooltips();
             });
 
-            $scope.$watch('model.fieldValues', function () {
-               fillOutFormFields();
+            $scope.$watch('model.fieldValues', function() {
+                fillOutFormFields();
             });
-            
-            $scope.onTabSequenceRequest = function () {
-                $timeout(function () {
+
+            $scope.$watch('model.toolbarControlsVisibility', function() {
+                hideToolbarControls();
+            });
+
+            $scope.$watch('model.fieldControlsVisibility', function() {
+                hideFieldControls();
+            });
+
+            $scope.onTabSequenceRequest = function() {
+                $timeout(function() {
                     var iframe = $element.find("iframe")[0];
                     iframe.contentWindow.focus();
                 });

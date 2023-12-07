@@ -31,7 +31,9 @@
         "zoomLevel"     :   {"type": "string"},
         "showToolbar"   :   {"type": "boolean", "default" : true},
         "enableTooltips":   {"type": "boolean", "default" : false},
-        "fieldValues"   :   {"type" :"map", "tags": { "scope" :"private" }}
+        "fieldValues"   :   {"type" :"map", "tags": { "scope" :"private" }},
+        "toolbarControlsVisibility"   :   {"type" :"map", "tags": { "scope" :"private" }},
+        "fieldControlsVisibility"   :   {"type" :"map", "tags": { "scope" :"private" }}
     },
     "api" : 
     {
@@ -56,15 +58,13 @@
             "parameters" : [
                 {"name" : "ids", "type" : "string[]"},
                 {"name" : "visible", "type" : "boolean"}
-            ],
-            "delayUntilFormLoads": true
+            ]
         },
         "setFieldControlsVisibility" : {
             "parameters" : [
                 {"name" : "names", "type" : "string[]"},
                 {"name" : "visible", "type" : "boolean"}
-            ],
-            "delayUntilFormLoads": true
+            ]
         }
     }
 }
