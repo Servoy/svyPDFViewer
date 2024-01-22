@@ -3,7 +3,7 @@
     "displayName":"Servoy PDF Viewer",
     "packageType": "Web-Component",
     "icon": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Crystal_Clear_mimetype_pdf.png",
-    "description": "A simple component for viewing PDF documents in Servoy's NGClient",
+    "description": "A simple component for viewing PDF documents in Servoy's NG & Titanium Clients.",
     "wikiUrl": "https://github.com/Servoy/svyPDFViewer/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyPDFViewer",
     "releases" : [
