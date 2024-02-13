@@ -1,6 +1,6 @@
 {
   "name": "pdfviewer",
-  "version": "2023.9.1",
+  "version": "2023.12",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
