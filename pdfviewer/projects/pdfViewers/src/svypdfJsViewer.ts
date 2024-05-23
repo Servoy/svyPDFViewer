@@ -26,6 +26,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     @Input() fieldValues: { property: any };
     @Input() toolbarControlsVisibility: { property: boolean };
     @Input() fieldControlsVisibility: { property: boolean };
+    @Input() onPageChanged: (pageNumber: number, previousPageNumber: number) => void;
 
     log: LoggerService;
     noCacheVar = '';
@@ -107,7 +108,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                 else this.disableTooltips();
                 this.fillOutFormFields();
                 this.hideFieldControls();
-            })
+            });
+            if (this.onPageChanged) {
+                viewer.eventBus.on("pagechanging", (evt) => {
+                    this.onPageChanged(evt.pageNumber, evt.previous);
+                });
+            }
         });
     }
 
@@ -240,7 +246,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             }
         });
     }
-    
+
     async enableTooltipsUI() {
         const iframe = this.getIframe();
         if (!iframe) return;

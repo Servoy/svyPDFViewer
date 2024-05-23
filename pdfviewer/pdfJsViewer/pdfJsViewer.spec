@@ -66,5 +66,21 @@
                 {"name" : "visible", "type" : "boolean"}
             ]
         }
+    },
+    "handlers" :
+    {
+        "onPageChanged" : {
+            "parameters" : [
+                {
+                    "type": "int",
+                    "name" : "pageNumber",
+                    "description" : "The page number of the new page that is displayed"
+                }, {
+                    "type": "int",
+                    "name" : "previousPageNumber",
+                    "description" : "The page number of the page that was previously displayed"
+                }
+            ]
+        }
     }
 }
