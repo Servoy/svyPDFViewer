@@ -69,7 +69,7 @@
     },
     "handlers" :
     {
-        "onPageChangedMethodID" : {
+        "onPageChanged" : {
             "parameters" : [
                 {
                     "type": "int",

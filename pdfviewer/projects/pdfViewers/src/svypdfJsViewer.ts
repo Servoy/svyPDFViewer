@@ -26,7 +26,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     @Input() fieldValues: { property: any };
     @Input() toolbarControlsVisibility: { property: boolean };
     @Input() fieldControlsVisibility: { property: boolean };
-    @Input() onPageChangedMethodID: (pageNumber: number, previousPageNumber: number) => void;
+    @Input() onPageChanged: (pageNumber: number, previousPageNumber: number) => void;
 
     log: LoggerService;
     noCacheVar = '';
@@ -109,12 +109,11 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                 this.fillOutFormFields();
                 this.hideFieldControls();
             });
-            viewer.eventBus.on("pagechanging", (evt) => {
-                if(this.onPageChangedMethodID) {
-                    this.onPageChangedMethodID(evt.pageNumber, evt.previous);
-                }
-            });
-
+            if (this.onPageChanged) {
+                viewer.eventBus.on("pagechanging", (evt) => {
+                    this.onPageChanged(evt.pageNumber, evt.previous);
+                });
+            }
         });
     }
 
@@ -247,7 +246,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             }
         });
     }
-    
+
     async enableTooltipsUI() {
         const iframe = this.getIframe();
         if (!iframe) return;
