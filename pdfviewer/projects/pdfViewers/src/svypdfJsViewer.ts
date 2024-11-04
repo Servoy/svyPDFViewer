@@ -219,7 +219,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         if (iframe) {
             let toolbar = iframe.contentWindow.document.getElementById("toolbarContainer");
             if (toolbar) {
-                toolbar.style.display = this.showToolbar ? "inline" : "none";
+                toolbar.style.display = this.showToolbar ? "block" : "none";
             }
         }
     }
