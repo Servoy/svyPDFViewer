@@ -38,6 +38,10 @@ function getFieldNames() {
 /**
  * Returns an array of strings representing the toolbar control IDs.
  * 
+ * This should not be used at runtime because it can only be called when the view is visible.
+ * It is intended for developers to get the names that the current pdfjs viewer internal component supports, 
+ * which can then be used in the solution.
+ * 
  * @returns {String[]} An array of toolbar control IDs.
  **/
 function getToolbarControlIds() {
