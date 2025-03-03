@@ -4,6 +4,14 @@
  * For more customization options, consider using pdfJsViewer.
  */
 
+var dataProviderID;
+
+var styleClass;
+
+var tabSeq;
+
+
+
 /**
  *  forces a reload of the current url
  **/

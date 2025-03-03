@@ -4,6 +4,31 @@
  * If customization is not required, consider using pdfViewer.
  **/
 
+var dataProviderID;
+
+var styleSheet;
+
+var styleClass;
+
+var tabSeq;
+
+var fieldValues;
+
+var toolbarControlsVisibility;
+
+var fieldControlsVisibility;
+
+
+
+var handlers = {
+    /**
+     * @param {Number} pageNumber
+     * @param {Number} previousPageNumber
+     */
+    onPageChanged: function() {}
+};
+
+
 
 /**
  *  forces a reload of the current url
