@@ -2,41 +2,77 @@
  * pdfJsViewer provides more control and customization options than pdfViewer.
  * It is more flexible and can handle advanced features like drawing and digital signatures.
  * If customization is not required, consider using pdfViewer.
- **/
+ */
 
+/**
+ * URL of the document to be displayed.
+ */
 var documentURL;
 
+/**
+ * Bound data provider identifier for the PDF document.
+ */
 var dataProviderID;
 
+/**
+ * Media or style sheet applied to the PDF viewer.
+ */
 var styleSheet;
 
+/**
+ * CSS style classes applied to the PDF viewer component.
+ */
 var styleClass;
 
+/**
+ * When true, prevents caching of the PDF document.
+ */
 var noCache;
 
+/**
+ * Flag indicating whether the PDF viewer is visible.
+ */
 var visible;
 
+/**
+ * Dimensions (width and height) of the PDF viewer component.
+ */
 var size;
 
+/**
+ * The current page number displayed in the viewer.
+ */
 var pageNumber;
 
+/**
+ * Tab sequence order for keyboard navigation.
+ */
 var tabSeq;
 
+/**
+ * The zoom level for displaying the PDF document.
+ */
 var zoomLevel;
 
+/**
+ * Flag indicating whether the toolbar is displayed.
+ */
 var showToolbar;
 
+/**
+ * Flag indicating whether tooltips are enabled in the PDF viewer.
+ */
 var enableTooltips;
-
 
 var handlers = {
     /**
-     * @param {Number} pageNumber
-     * @param {Number} previousPageNumber
+     * Fired when the page in the PDF viewer changes.
+     *
+     * @param {Number} pageNumber The page number of the new page that is displayed.
+     * @param {Number} previousPageNumber The page number of the page that was previously displayed.
      */
     onPageChanged: function() {}
 };
-
 
 
 /**
