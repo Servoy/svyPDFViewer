@@ -7,6 +7,7 @@ import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChang
         <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
             <iframe #iframe [src]="iframeURL | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
         </div> `,
+    standalone: false
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
