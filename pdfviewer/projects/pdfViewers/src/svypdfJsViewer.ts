@@ -134,6 +134,9 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         if (this.dataProviderID && this.dataProviderID.url) {
             const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
             this.documentUrlVar += '?file=' + serverURL + '/' + encodeURIComponent(this.dataProviderID.url);
+        } else if (typeof this.dataProviderID === 'string') {
+            // if this is just a string the we assume this is a direct url and we will show this
+            this.documentUrlVar += '?file=' + this.dataProviderID;
         } else if (this.documentURL) {
             // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
             this.documentUrlVar += '?file=' + this.documentURL;
