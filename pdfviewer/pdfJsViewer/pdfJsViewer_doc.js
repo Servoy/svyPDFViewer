@@ -11,6 +11,10 @@ var documentURL;
 
 /**
  * Bound data provider identifier for the PDF document.
+ * The dataProviderID can also be a string, containing the URL of the PDF document.
+ * By using the string, the saving of the PDF document will show the document name.
+ * For example:
+ * dataProviderID = '/' + "https://example.com/path/to/document.pdf"; or '/' + plugins.file.createFile(path to your local pdf).getRemoteUrl();
  */
 var dataProviderID;
 
