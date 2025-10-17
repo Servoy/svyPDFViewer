@@ -1,7 +1,8 @@
 /**
- * pdfViewer uses the PDF viewing capabilities built into the browser.
+ * This pdfViewer component uses the PDF viewing capabilities built into the browser.
+ * 
  * It is simple and relies on tools already available in the client's browser, offering limited personalization.
- * For more customization options, consider using pdfJsViewer.
+ * For more customization options, consider using the pdfJsViewer component.
  */
 
 /**

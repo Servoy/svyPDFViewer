@@ -1,8 +1,9 @@
 /**
- * pdfJsViewer provides more control and customization options than pdfViewer.
+ * This pdfJsViewer component provides more control and customization options than the pdfViewer component.
+ * 
  * It is more flexible and can handle advanced features like drawing and digital signatures.
  * If customization is not required, consider using pdfViewer.
- **/
+ */
 
 /**
  * URL of the document to be displayed.
