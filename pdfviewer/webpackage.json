@@ -2,7 +2,7 @@
     "name":"pdfviewer",
     "displayName":"Servoy PDF Viewer",
     "packageType": "Web-Component",
-    "icon": "https://raw.githubusercontent.com/Servoy/svyPDFViewer/master/icon.png",
+    "icon": "https://raw.githubusercontent.com/Servoy/svyPDFViewer/master/pdfviewer/icon.png",
     "description": "A simple component for viewing PDF documents in Servoy's NG & Titanium Clients.",
     "wikiUrl": "https://github.com/Servoy/svyPDFViewer/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyPDFViewer",
