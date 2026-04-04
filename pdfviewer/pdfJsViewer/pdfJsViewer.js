@@ -3,7 +3,8 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
         restrict: 'E',
         scope: {
             model: '=svyModel',
-            api: "=svyApi"
+            api: "=svyApi",
+            handlers: "=svyHandlers"
         },
         link: function($scope, $element, $attrs) {
             $scope.iframeURL = '';
@@ -30,7 +31,12 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                             else disableTooltips();
                             fillOutFormFields();
                             hideFieldControls();
-                        })
+                        });
+                        if ($scope.handlers.onPageChanged) {
+                            viewer.eventBus.on("pagechanging", (evt) => {
+                                $scope.handlers.onPageChanged(evt.pageNumber, evt.previous);
+                            });
+                        }
                     });
                 });
             }
