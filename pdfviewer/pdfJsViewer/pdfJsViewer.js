@@ -97,7 +97,7 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                             link.href = serverUrl + '/' + $scope.model.styleSheet;
                             link.rel = "stylesheet";
                             link.type = "text/css";
-                            frames[0].document.head.appendChild(link);
+                            iframe.contentWindow.document.head.appendChild(link);
                         });
                     })
                 }
