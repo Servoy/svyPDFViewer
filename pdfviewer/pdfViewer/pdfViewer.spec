@@ -14,7 +14,7 @@
         "styleClass"    : {"type" :"styleclass", "tags": { "scope" :"design" }},
         "noCache"       : {"type" : "boolean"},
         "visible"       : {"type": "visible" },
-        "size"          : {"type": "dimension",  "default" : {"width":50, "height":50}},
+        "designsize"    : {"type": "dimension", "tags": {"serveronly": true, "scope": "private"}, "default" : {"width":50, "height":50}},
         "tabSeq"        : {"type" :"tabseq", "tags": { "scope" :"design" }}
     },
     "api" : 

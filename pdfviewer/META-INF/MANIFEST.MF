@@ -4,7 +4,7 @@ Bundle-Name: Servoy PDF Viewer
 Bundle-Version: 2025.3.1
 Entry-Point: dist/servoy/pdfviewer
 NPM-PackageName: @servoy/pdfviewer
-NG2-Module: PdfViewerModule
+NG2-Components: SvyPDFViewer,SvyPdfJsViewer
 Package-Type: Web-Component
 
 Name: pdfViewer/pdfViewer.spec

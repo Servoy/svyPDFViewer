@@ -1,41 +1,47 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
-import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ServoyPublicModule } from '@servoy/public';
+import { SafePipe } from './safePipe';
 
 @Component({
     selector: 'pdfviewer-pdf-Viewer',
     template: `
-        <div [ngClass]="styleClass" style="width:100%; height:100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
+        <div [ngClass]="styleClass()" style="width:100%; height:100%" [id]="servoyApi().getMarkupId()" [sabloTabseq]="tabSeq()" (focus)="onTabSequenceRequest()" #element>
                 <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%" ></iframe>
         </div>
     `,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [CommonModule, ServoyPublicModule, SafePipe]
 })
 export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
 
-    @ViewChild('iframe', { read: ElementRef }) iframeElementRef: ElementRef;
+    @ViewChild('iframe', { read: ElementRef }) iframeElementRef!: ElementRef;
 
-    @Input() documentURL: string;
-    @Input() noCache: boolean;
-    @Input() dataProviderID: any;
-    @Input() tabSeq: number;
-    @Input() styleClass: string;
-    @Input() visible: boolean;
+    readonly documentURL = input<string>(undefined as any);
+    readonly noCache = input<boolean>(undefined as any);
+    readonly dataProviderID = input<any>(undefined as any);
+    readonly tabSeq = input<number>(undefined as any);
+    readonly styleClass = input<string>(undefined as any);
+    readonly visible = input<boolean>(undefined as any);
+
+    private readonly windowRef = inject(WindowRefService);
+    private readonly logFactory = inject(LoggerFactory);
 
     log: LoggerService;
     noCacheVar = '';
     documentUrlVar = '';
     iframeURL = '';
 
-    constructor(renderer: Renderer2, cdRef: ChangeDetectorRef,
-        private windowRef: WindowRefService, logFactory: LoggerFactory) {
-        super(renderer, cdRef);
-        this.log = logFactory.getLogger('SvyPDFViewer');
+    constructor() {
+        super();
+        this.log = this.logFactory.getLogger('SvyPDFViewer');
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes) {
             for (const property of Object.keys(changes)) {
-                const change = changes[property];
                 switch (property) {
                     case 'noCache':
                         this.setNoCheck();
@@ -53,15 +59,13 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     createBaseURL() {
         this.documentUrlVar = '';
-        if (this.dataProviderID && this.dataProviderID.url) {
+        if (this.dataProviderID() && this.dataProviderID().url) {
             const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
-            this.documentUrlVar += serverURL + '/' + encodeURI(this.dataProviderID.url);
-        } else if (typeof this.dataProviderID === 'string') {
-            // if this is just a string the we assume this is a direct url and we will show this
-            this.documentUrlVar += this.dataProviderID;
-        } else if (this.documentURL) {
-            // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
-            this.documentUrlVar += this.documentURL;
+            this.documentUrlVar += serverURL + '/' + encodeURI(this.dataProviderID().url);
+        } else if (typeof this.dataProviderID() === 'string') {
+            this.documentUrlVar += this.dataProviderID();
+        } else if (this.documentURL()) {
+            this.documentUrlVar += this.documentURL();
         } else {
             return false;
         }
@@ -70,8 +74,7 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     setNoCheck() {
-        // check for noCache and generate random http param
-        if (this.noCache === true) {
+        if (this.noCache() === true) {
             const r = Math.round(Math.random() * 10000000);
             this.noCacheVar = 'r=' + r;
         } else {
@@ -80,12 +83,6 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
         this.updateIframeURL([this.documentUrlVar, this.noCacheVar]);
     }
 
-    /**
-     * The first parameter of the newValues array should be 'documentURL'
-     *
-     * @param newValues
-     *
-     */
     updateIframeURL(newValues: any[]) {
         if(!newValues[0]) {
             return;
@@ -99,9 +96,9 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
     reload() {
         setTimeout(() => {
             const url = this.iframeElementRef.nativeElement.src;
-            this.renderer.setAttribute(this.iframeElementRef.nativeElement, 'src', 'about:blank');
+            this.getRenderer().setAttribute(this.iframeElementRef.nativeElement, 'src', 'about:blank');
             setTimeout(() => {
-                this.renderer.setAttribute(this.iframeElementRef.nativeElement, 'src', url);
+                this.getRenderer().setAttribute(this.iframeElementRef.nativeElement, 'src', url);
             }, 5);
         });
     }
