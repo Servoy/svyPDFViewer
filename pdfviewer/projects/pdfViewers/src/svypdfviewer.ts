@@ -1,5 +1,5 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
-import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input } from '@angular/core';
+import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServoyPublicModule } from '@servoy/public';
 import { SafePipe } from './safePipe';
@@ -8,7 +8,7 @@ import { SafePipe } from './safePipe';
     selector: 'pdfviewer-pdf-Viewer',
     template: `
         <div [ngClass]="styleClass()" style="width:100%; height:100%" [id]="servoyApi().getMarkupId()" [sabloTabseq]="tabSeq()" (focus)="onTabSequenceRequest()" #element>
-                <iframe #iframe [src]="iframeURL | safe" style="width:100%; height:100%" ></iframe>
+                <iframe #iframe [src]="iframeURL() | safe" style="width:100%; height:100%" ></iframe>
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +32,7 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
     log: LoggerService;
     noCacheVar = '';
     documentUrlVar = '';
-    iframeURL = '';
+    readonly iframeURL = signal('');
 
     constructor() {
         super();
@@ -89,8 +89,8 @@ export class SvyPDFViewer extends ServoyBaseComponent<HTMLDivElement> {
         }
         const url = newValues.shift();
         newValues = newValues.filter((item) => (item != null && item !== ''));
-        this.iframeURL = url + '#' + newValues.join('&');
-        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
+        this.iframeURL.set(url + '#' + newValues.join('&'));
+        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL());
     }
 
     reload() {

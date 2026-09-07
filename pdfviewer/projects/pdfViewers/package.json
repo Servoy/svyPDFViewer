@@ -1,11 +1,6 @@
 {
     "name": "@servoy/pdfviewer",
     "version": "2026.9.1",
-    "peerDependencies": {
-      "@angular/common": "^19",
-      "@angular/core": "^19",
-      "@angular/forms": "^19"
-    },
     "dependencies": {
       "tslib": "*"
     },

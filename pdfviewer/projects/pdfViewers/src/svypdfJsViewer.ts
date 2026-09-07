@@ -1,5 +1,5 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
-import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input } from '@angular/core';
+import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServoyPublicModule } from '@servoy/public';
 import { SafePipe } from './safePipe';
@@ -8,7 +8,7 @@ import { SafePipe } from './safePipe';
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
         <div [ngClass]="styleClass()" style="height: 100%; width: 100%" [id]="servoyApi().getMarkupId()" [sabloTabseq]="tabSeq()" (focus)="onTabSequenceRequest()" #element>
-            <iframe #iframe [src]="iframeURL | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
+            <iframe #iframe [src]="iframeURL() | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
         </div> `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
@@ -42,7 +42,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     documentUrlVar = '';
     zoomLevelVar = '';
     pageNumberVar = '';
-    iframeURL = '';
+    readonly iframeURL = signal('');
 
     constructor() {
         super();
@@ -146,7 +146,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         } else if (this.documentURL()) {
             this.documentUrlVar += '?file=' + this.documentURL();
         } else {
-            this.iframeURL = 'pdfjs/web/viewer.html';
+            this.iframeURL.set('pdfjs/web/viewer.html');
             return false;
         }
         this.updateIframeURL([this.documentUrlVar, this.pageNumberVar, this.zoomLevelVar, this.noCacheVar]);
@@ -201,8 +201,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const url = newValues.shift();
         newValues = newValues.filter((item) => (item != null && item !== '')
         );
-        this.iframeURL = url + '#' + newValues.join('&');
-        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
+        this.iframeURL.set(url + '#' + newValues.join('&'));
+        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL());
     }
 
     reload() {
