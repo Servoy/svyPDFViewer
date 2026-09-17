@@ -107,6 +107,9 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             viewer.eventBus.on("textlayerrendered", () => {
                 if (this.enableTooltips) this.enableTooltipsUI();
                 else this.disableTooltips();
+                this.hideFieldControls();
+            });
+            viewer.eventBus.on("annotationlayerrendered", () => {
                 this.fillOutFormFields();
                 this.hideFieldControls();
             });
@@ -264,11 +267,14 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
         let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
         // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
-        let elementsMap = new Map()
+        let elementsMap = new Map<string, Array<Element>>()
         for (let e = 0; e < elements.length; e++) {
             let element = elements[e];
             let name = (element.firstChild as HTMLFormElement).name;
-            elementsMap.set(name, element);
+            if (!elementsMap.has(name)) {
+                elementsMap.set(name, []);
+            }
+            elementsMap.get(name).push(element);
         }
 
         const annotations = await pdf.getFieldObjects();
@@ -279,14 +285,18 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             for (let a = 0; a < pageAnnotations.length; a++) {
                 let name = pageAnnotations[a].fieldName;
                 if (annotations[name] && elementsMap.get(name)) {
-                    let element = elementsMap.get(name);
-                    element.classList.add("tooltip");
-                    let x = iframe.contentWindow.document.createElement("SPAN");
-                    x.classList.add("tooltiptext");
-                    let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
-                    let t = iframe.contentWindow.document.createTextNode(tooltipText);
-                    x.appendChild(t);
-                    element.appendChild(x);
+                    elementsMap.get(name).forEach((element) => {
+                        if (element.getElementsByClassName('tooltiptext').length > 0) {
+                            return;
+                        }
+                        element.classList.add("tooltip");
+                        let x = iframe.contentWindow.document.createElement("SPAN");
+                        x.classList.add("tooltiptext");
+                        let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
+                        let t = iframe.contentWindow.document.createTextNode(tooltipText);
+                        x.appendChild(t);
+                        element.appendChild(x);
+                    });
                 }
             }
         }
@@ -321,43 +331,107 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const fieldObjects = await pdf.getFieldObjects();
 
         if (!fieldObjects) return;
-        const fields = {};
-        Object.keys(fieldObjects).forEach((name) => {
-            let fieldObject = fieldObjects[name];
-            fields[name] = fieldObject[0].id;
-        });
 
         Object.keys(this.fieldValues).forEach((key) => {
-            if (fields[key]) {
-                let element = iframe.contentWindow.document.getElementsByName(key)[0];
-                if (element) {
-                    if (fieldObjects[key][0].type == 'text')
-                        (element as HTMLInputElement).value = this.fieldValues[key];
-                    else if (fieldObjects[key][0].type == 'checkbox')
-                        (element as HTMLInputElement).checked = this.fieldValues[key];
-                    else {
-                        console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
-                        return;
-                    }
+            const fieldWidgets = fieldObjects[key];
+            if (!fieldWidgets || !fieldWidgets.length) return;
+
+            let handled = false;
+            const rawValue = this.fieldValues[key];
+
+            fieldWidgets.forEach((widget) => {
+                if (widget.type == 'text') {
+                    annotationStorage.setValue(widget.id, { value: this.toTextValue(rawValue) });
+                    handled = true;
+                } else if (widget.type == 'checkbox') {
+                    annotationStorage.setValue(widget.id, { value: rawValue });
+                    handled = true;
                 }
-                annotationStorage.setValue(fields[key], { value: this.fieldValues[key] });
+            });
+
+            const elements = iframe.contentWindow.document.getElementsByName(key);
+            let hasElement = false;
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i] as HTMLInputElement;
+                const inputType = element.type;
+                if (inputType == 'text' || inputType == 'textarea') {
+                    element.value = this.toTextValue(rawValue);
+                    handled = true;
+                    hasElement = true;
+                } else if (inputType == 'checkbox') {
+                    element.checked = rawValue;
+                    handled = true;
+                    hasElement = true;
+                } else {
+                    continue;
+                }
+                const annotationId = this.getAnnotationId(element);
+                if (annotationId) {
+                    const value = inputType == 'checkbox' ? rawValue : this.toTextValue(rawValue);
+                    annotationStorage.setValue(annotationId, { value });
+                }
+            }
+
+            if (!handled && !hasElement) {
+                console.warn('Cannot fill out form field "' + key + '": Only text and checkbox input types are currently implemented.');
             }
         });
+    }
+
+    private getAnnotationId(element: HTMLElement): string {
+        let node: HTMLElement = element;
+        while (node) {
+            const id = node.getAttribute && node.getAttribute('data-annotation-id');
+            if (id) return id;
+            node = node.parentElement;
+        }
+        return null;
+    }
+
+    private toTextValue(value: any): any {
+        if (value === null || value === undefined) return value;
+        if (typeof value === 'boolean') return value;
+        return String(value);
     }
 
     public async getFieldValues() {
         const pdf = this.getPDFDocument();
         const annotationStorage = pdf.annotationStorage;
+        const iframe = this.getIframe();
         const fieldValues = {};
 
         const annotations = await pdf.getFieldObjects();
         Object.keys(annotations).forEach((key) => {
-            let annotation = annotations[key][0];
-            if (annotation.name) {
-                let id = annotation.id
-                let value = null
-                if (annotationStorage.getRawValue(id)) {
-                    value = annotationStorage.getRawValue(id).value;
+            const widgets = annotations[key];
+            if (widgets && widgets.length && widgets[0].name) {
+                let value = null;
+
+                if (iframe) {
+                    const elements = iframe.contentWindow.document.getElementsByName(key);
+                    for (let i = 0; i < elements.length; i++) {
+                        const annotationId = this.getAnnotationId(elements[i]);
+                        if (!annotationId) continue;
+                        const rawValue = annotationStorage.getRawValue(annotationId);
+                        if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                            value = rawValue.value;
+                            break;
+                        }
+                    }
+                }
+
+                if (value === null) {
+                    for (let i = 0; i < widgets.length; i++) {
+                        const rawValue = annotationStorage.getRawValue(widgets[i].id);
+                        if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                            value = rawValue.value;
+                            break;
+                        }
+                    }
+                }
+
+                if (value === null) {
+                    const widgetWithValue = widgets.find((widget) => widget.value !== undefined && widget.value !== null && widget.value !== '');
+                    value = widgetWithValue ? widgetWithValue.value : widgets[0].value;
                 }
 
                 fieldValues[key] = value;
