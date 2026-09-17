@@ -1,57 +1,50 @@
 import { LoggerFactory, LoggerService, ServoyBaseComponent, WindowRefService } from '@servoy/public';
-import { Component, SimpleChanges, ViewChild, ChangeDetectionStrategy, ElementRef, inject, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ServoyPublicModule } from '@servoy/public';
-import { SafePipe } from './safePipe';
+import { Component, Input, Renderer2, ChangeDetectorRef, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'pdfviewer-pdf-Js-Viewer',
     template: `
-        <div [ngClass]="styleClass()" style="height: 100%; width: 100%" [id]="servoyApi().getMarkupId()" [sabloTabseq]="tabSeq()" (focus)="onTabSequenceRequest()" #element>
-            <iframe #iframe [src]="iframeURL() | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
+        <div [ngClass]="styleClass" style="height: 100%; width: 100%" [id]="servoyApi.getMarkupId()" [sabloTabseq]="tabSeq" (focus)="onTabSequenceRequest()" #element>
+            <iframe #iframe [src]="iframeURL | safe" (load)="documentLoaded()" style="width:100%; height:100%" ></iframe>
         </div> `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [CommonModule, ServoyPublicModule, SafePipe]
+    standalone: false
 })
 export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
-    @ViewChild('iframe', { read: ElementRef }) iframeElementRef!: ElementRef;
+    @ViewChild('iframe', { read: ElementRef }) iframeElementRef: ElementRef;
 
-    readonly documentURL = input<string>(undefined as any);
-    readonly noCache = input<boolean>(undefined as any);
-    readonly dataProviderID = input<any>(undefined as any);
-    readonly tabSeq = input<number>(undefined as any);
-    readonly styleClass = input<string>(undefined as any);
-    readonly visible = input<boolean>(undefined as any);
-    readonly zoomLevel = input<string>(undefined as any);
-    readonly pageNumber = input<number>(undefined as any);
-    readonly styleSheet = input<string>(undefined as any);
-    readonly showToolbar = input<boolean>(undefined as any);
-    readonly enableTooltips = input<boolean>(undefined as any);
-    readonly fieldValues = input<{ [key: string]: any }>(undefined as any);
-    readonly toolbarControlsVisibility = input<{ [key: string]: boolean }>(undefined as any);
-    readonly fieldControlsVisibility = input<{ [key: string]: boolean }>(undefined as any);
-    readonly onPageChanged = input<(pageNumber: number, previousPageNumber: number) => void>(undefined as any);
-
-    private readonly windowRef = inject(WindowRefService);
-    private readonly logFactory = inject(LoggerFactory);
+    @Input() documentURL: string;
+    @Input() noCache: boolean;
+    @Input() dataProviderID: any;
+    @Input() tabSeq: number;
+    @Input() styleClass: string;
+    @Input() visible: boolean;
+    @Input() zoomLevel: string;
+    @Input() pageNumber: number;
+    @Input() styleSheet: string;
+    @Input() showToolbar: boolean;
+    @Input() enableTooltips: boolean;
+    @Input() fieldValues: { property: any };
+    @Input() toolbarControlsVisibility: { property: boolean };
+    @Input() fieldControlsVisibility: { property: boolean };
+    @Input() onPageChanged: (pageNumber: number, previousPageNumber: number) => void;
 
     log: LoggerService;
     noCacheVar = '';
     documentUrlVar = '';
     zoomLevelVar = '';
     pageNumberVar = '';
-    readonly iframeURL = signal('');
+    iframeURL = '';
 
-    constructor() {
-        super();
-        this.log = this.logFactory.getLogger('SvyPdfJsViewer');
+    constructor(renderer: Renderer2, protected cdRef: ChangeDetectorRef,
+        private windowRef: WindowRefService, logFactory: LoggerFactory) {
+        super(renderer, cdRef);
+        this.log = logFactory.getLogger('SvyPdfJsViewer');
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        if (this.servoyApi().isInDesigner()) {
+        if (this.servoyApi.isInDesigner()) {
             setTimeout(() => {
                 const iframe = this.iframeElementRef.nativeElement;
                 iframe.setAttribute('src', 'pdfjs/web/viewer.html');
@@ -88,7 +81,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
                             this.onShowToolbarChanged();
                             break;
                         case 'enableTooltips':
-                            if (this.enableTooltips()) this.enableTooltipsUI();
+                            if (this.enableTooltips) this.enableTooltipsUI();
                             else this.disableTooltips();
                             break;
                         case 'fieldValues':
@@ -112,14 +105,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
             this.onShowToolbarChanged();
             this.hideToolbarControls();
             viewer.eventBus.on("textlayerrendered", () => {
-                if (this.enableTooltips()) this.enableTooltipsUI();
+                if (this.enableTooltips) this.enableTooltipsUI();
                 else this.disableTooltips();
+                this.hideFieldControls();
+            });
+            viewer.eventBus.on("annotationlayerrendered", () => {
                 this.fillOutFormFields();
                 this.hideFieldControls();
             });
-            if (this.onPageChanged()) {
-                viewer.eventBus.on("pagechanging", (evt: any) => {
-                    this.onPageChanged()(evt.pageNumber, evt.previous);
+            if (this.onPageChanged) {
+                viewer.eventBus.on("pagechanging", (evt) => {
+                    this.onPageChanged(evt.pageNumber, evt.previous);
                 });
             }
         });
@@ -138,15 +134,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
 
     createBaseURL() {
         this.documentUrlVar = 'pdfjs/web/viewer.html';
-        if (this.dataProviderID() && this.dataProviderID().url) {
+        if (this.dataProviderID && this.dataProviderID.url) {
             const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
-            this.documentUrlVar += '?file=' + serverURL + '/' + encodeURIComponent(this.dataProviderID().url);
-        } else if (typeof this.dataProviderID() === 'string') {
-            this.documentUrlVar += '?file=' + this.dataProviderID();
-        } else if (this.documentURL()) {
-            this.documentUrlVar += '?file=' + this.documentURL();
+            this.documentUrlVar += '?file=' + serverURL + '/' + encodeURIComponent(this.dataProviderID.url);
+        } else if (typeof this.dataProviderID === 'string') {
+            // if this is just a string the we assume this is a direct url and we will show this
+            this.documentUrlVar += '?file=' + this.dataProviderID;
+        } else if (this.documentURL) {
+            // console.warn('Using documentURL is deprecated, this property is replaced for dataprovider property');
+            this.documentUrlVar += '?file=' + this.documentURL;
         } else {
-            this.iframeURL.set('pdfjs/web/viewer.html');
+            this.iframeURL = 'pdfjs/web/viewer.html';
             return false;
         }
         this.updateIframeURL([this.documentUrlVar, this.pageNumberVar, this.zoomLevelVar, this.noCacheVar]);
@@ -154,7 +152,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     setNoCache() {
-        if (this.noCache() === true) {
+        // check for noCache and generate random http param
+        if (this.noCache === true) {
             const r = Math.round(Math.random() * 10000000);
             this.noCacheVar = 'r=' + r;
         } else {
@@ -164,8 +163,8 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     setZoomLevel() {
-        if (this.zoomLevel() != null) {
-            this.zoomLevelVar = 'zoom=' + this.zoomLevel();
+        if (this.zoomLevel != null) {
+            this.zoomLevelVar = 'zoom=' + this.zoomLevel;
         } else {
             this.zoomLevelVar = '';
         }
@@ -173,27 +172,33 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     setPageNumber() {
-        if (this.pageNumber() != null && this.pageNumber() >= 1) {
-            this.pageNumberVar = 'page=' + this.pageNumber();
+        if (this.pageNumber != null && this.pageNumber >= 1) {
+            this.pageNumberVar = 'page=' + this.pageNumber;
         }
         this.updateIframeURL([this.documentUrlVar, this.pageNumberVar, this.zoomLevelVar, this.noCacheVar]);
     }
 
     addCustomCSS() {
-        if (this.styleSheet()) {
+        // add custom CSS to the iframe
+        if (this.styleSheet) {
             setTimeout(() => {
-                this.getRenderer().listen(this.getIframe(), 'load', () => {
+                this.renderer.listen(this.getIframe(), 'load', () => {
                     const link = document.createElement('link');
                     const serverURL = this.windowRef.nativeWindow.location.href.split('/solution/')[0];
-                    link.href = serverURL + '/' + this.styleSheet();
+                    link.href = serverURL + '/' + this.styleSheet;
                     link.rel = 'stylesheet';
                     link.type = 'text/css';
-                    (this.getIframe() as HTMLIFrameElement).contentDocument!.head.appendChild(link);
+                    (this.getIframe() as HTMLIFrameElement).contentDocument.head.appendChild(link);
                 });
             });
         }
     }
 
+    /**
+     * The first parameter of the newValues array should be 'documentURL'
+     *
+     * @param newValues
+     */
     updateIframeURL(newValues: any[]) {
         if (!newValues[0]) {
             return;
@@ -201,17 +206,17 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const url = newValues.shift();
         newValues = newValues.filter((item) => (item != null && item !== '')
         );
-        this.iframeURL.set(url + '#' + newValues.join('&'));
-        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL());
+        this.iframeURL = url + '#' + newValues.join('&');
+        this.log.debug('Rendering iframe pdf with URL: ' + this.iframeURL);
     }
 
     reload() {
         setTimeout(() => {
             const iframe = this.getIframe();
             const url = iframe.src;
-            this.getRenderer().setAttribute(iframe, 'src', 'about:blank');
+            this.renderer.setAttribute(iframe, 'src', 'about:blank');
             setTimeout(() => {
-                this.getRenderer().setAttribute(iframe, 'src', url);
+                this.renderer.setAttribute(iframe, 'src', url);
             }, 5);
         });
     }
@@ -219,32 +224,32 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     onShowToolbarChanged() {
         const iframe = this.getIframe();
         if (iframe) {
-            const toolbar = iframe.contentWindow.document.getElementById("toolbarContainer");
+            let toolbar = iframe.contentWindow.document.getElementById("toolbarContainer");
             if (toolbar) {
-                toolbar.style.display = this.showToolbar() ? "block" : "none";
+                toolbar.style.display = this.showToolbar ? "block" : "none";
             }
         }
     }
     hideToolbarControls() {
-        if (!this.toolbarControlsVisibility()) return;
+        if (!this.toolbarControlsVisibility) return;
         const iframe = this.getIframe();
         if (!iframe) return;
-        Object.keys(this.toolbarControlsVisibility()).forEach((id) => {
+        Object.keys(this.toolbarControlsVisibility).forEach((id) => {
             const element = iframe.contentWindow.document.getElementById(id);
             if (element) {
-                element.hidden = !this.toolbarControlsVisibility()[id];
+                element.hidden = !this.toolbarControlsVisibility[id];
             }
         });
     }
 
     hideFieldControls() {
-        if (!this.fieldControlsVisibility()) return;
+        if (!this.fieldControlsVisibility) return;
         const iframe = this.getIframe();
         if (!iframe) return;
-        Object.keys(this.fieldControlsVisibility()).forEach((name) => {
+        Object.keys(this.fieldControlsVisibility).forEach((name) => {
             const element = iframe.contentWindow.document.getElementsByName(name);
             if (element && element.length) {
-                element[0].hidden = !this.fieldControlsVisibility()[name];
+                element[0].hidden = !this.fieldControlsVisibility[name];
             }
         });
     }
@@ -255,35 +260,43 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const pdf = this.getPDFDocument()
         if (!pdf) return;
 
-        const tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
+        let tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
         if (tooltipTexts.length > 0) {
             return;
         }
 
-        const elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
-        const elementsMap = new Map()
+        let elements = iframe.contentWindow.document.getElementsByClassName('textWidgetAnnotation');
+        // TODO: implement tooltips for buttonWidgetAnnotations: let cbElements = iframe.contentWindow.document.getElementsByClassName('buttonWidgetAnnotation');
+        let elementsMap = new Map<string, Array<Element>>()
         for (let e = 0; e < elements.length; e++) {
-            const element = elements[e];
-            const name = (element.firstChild as HTMLFormElement).name;
-            elementsMap.set(name, element);
+            let element = elements[e];
+            let name = (element.firstChild as HTMLFormElement).name;
+            if (!elementsMap.has(name)) {
+                elementsMap.set(name, []);
+            }
+            elementsMap.get(name).push(element);
         }
 
         const annotations = await pdf.getFieldObjects();
         for (let p = 1; p <= pdf.numPages; p++) {
-            const page = await pdf.getPage(p);
-            const pageAnnotations = await page.getAnnotations();
+            let page = await pdf.getPage(p);
+            let pageAnnotations = await page.getAnnotations();
 
             for (let a = 0; a < pageAnnotations.length; a++) {
-                const name = pageAnnotations[a].fieldName;
+                let name = pageAnnotations[a].fieldName;
                 if (annotations[name] && elementsMap.get(name)) {
-                    const element = elementsMap.get(name);
-                    element.classList.add("tooltip");
-                    const x = iframe.contentWindow.document.createElement("SPAN");
-                    x.classList.add("tooltiptext");
-                    const tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
-                    const t = iframe.contentWindow.document.createTextNode(tooltipText);
-                    x.appendChild(t);
-                    element.appendChild(x);
+                    elementsMap.get(name).forEach((element) => {
+                        if (element.getElementsByClassName('tooltiptext').length > 0) {
+                            return;
+                        }
+                        element.classList.add("tooltip");
+                        let x = iframe.contentWindow.document.createElement("SPAN");
+                        x.classList.add("tooltiptext");
+                        let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
+                        let t = iframe.contentWindow.document.createTextNode(tooltipText);
+                        x.appendChild(t);
+                        element.appendChild(x);
+                    });
                 }
             }
         }
@@ -295,12 +308,12 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const pdf = this.getPDFDocument()
         if (!pdf) return;
 
-        const tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
+        let tooltipTexts = iframe.contentWindow.document.getElementsByClassName('tooltiptext');
         while (tooltipTexts.length > 0) {
             tooltipTexts[0].remove();
         }
 
-        const annotations = iframe.contentWindow.document.getElementsByClassName('tooltip');
+        let annotations = iframe.contentWindow.document.getElementsByClassName('tooltip');
         while (annotations.length > 0) {
             annotations[0].classList.remove('tooltip');
         }
@@ -308,7 +321,7 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
     }
 
     async fillOutFormFields() {
-        if (!this.fieldValues()) return;
+        if (!this.fieldValues) return;
         const iframe = this.getIframe();
         if (!iframe) return;
         const pdf = this.getPDFDocument()
@@ -318,43 +331,107 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         const fieldObjects = await pdf.getFieldObjects();
 
         if (!fieldObjects) return;
-        const fields: { [key: string]: any } = {};
-        Object.keys(fieldObjects).forEach((name) => {
-            const fieldObject = fieldObjects[name];
-            fields[name] = fieldObject[0].id;
-        });
 
-        Object.keys(this.fieldValues()).forEach((key) => {
-            if (fields[key]) {
-                const element = iframe.contentWindow.document.getElementsByName(key)[0];
-                if (element) {
-                    if (fieldObjects[key][0].type == 'text')
-                        (element as HTMLInputElement).value = this.fieldValues()[key];
-                    else if (fieldObjects[key][0].type == 'checkbox')
-                        (element as HTMLInputElement).checked = this.fieldValues()[key];
-                    else {
-                        console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
-                        return;
-                    }
+        Object.keys(this.fieldValues).forEach((key) => {
+            const fieldWidgets = fieldObjects[key];
+            if (!fieldWidgets || !fieldWidgets.length) return;
+
+            let handled = false;
+            const rawValue = this.fieldValues[key];
+
+            fieldWidgets.forEach((widget) => {
+                if (widget.type == 'text') {
+                    annotationStorage.setValue(widget.id, { value: this.toTextValue(rawValue) });
+                    handled = true;
+                } else if (widget.type == 'checkbox') {
+                    annotationStorage.setValue(widget.id, { value: rawValue });
+                    handled = true;
                 }
-                annotationStorage.setValue(fields[key], { value: this.fieldValues()[key] });
+            });
+
+            const elements = iframe.contentWindow.document.getElementsByName(key);
+            let hasElement = false;
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i] as HTMLInputElement;
+                const inputType = element.type;
+                if (inputType == 'text' || inputType == 'textarea') {
+                    element.value = this.toTextValue(rawValue);
+                    handled = true;
+                    hasElement = true;
+                } else if (inputType == 'checkbox') {
+                    element.checked = rawValue;
+                    handled = true;
+                    hasElement = true;
+                } else {
+                    continue;
+                }
+                const annotationId = this.getAnnotationId(element);
+                if (annotationId) {
+                    const value = inputType == 'checkbox' ? rawValue : this.toTextValue(rawValue);
+                    annotationStorage.setValue(annotationId, { value });
+                }
+            }
+
+            if (!handled && !hasElement) {
+                console.warn('Cannot fill out form field "' + key + '": Only text and checkbox input types are currently implemented.');
             }
         });
+    }
+
+    private getAnnotationId(element: HTMLElement): string {
+        let node: HTMLElement = element;
+        while (node) {
+            const id = node.getAttribute && node.getAttribute('data-annotation-id');
+            if (id) return id;
+            node = node.parentElement;
+        }
+        return null;
+    }
+
+    private toTextValue(value: any): any {
+        if (value === null || value === undefined) return value;
+        if (typeof value === 'boolean') return value;
+        return String(value);
     }
 
     public async getFieldValues() {
         const pdf = this.getPDFDocument();
         const annotationStorage = pdf.annotationStorage;
-        const fieldValues: { [key: string]: any } = {};
+        const iframe = this.getIframe();
+        const fieldValues = {};
 
         const annotations = await pdf.getFieldObjects();
         Object.keys(annotations).forEach((key) => {
-            const annotation = annotations[key][0];
-            if (annotation.name) {
-                const id = annotation.id
-                let value = null
-                if (annotationStorage.getRawValue(id)) {
-                    value = annotationStorage.getRawValue(id).value;
+            const widgets = annotations[key];
+            if (widgets && widgets.length && widgets[0].name) {
+                let value = null;
+
+                if (iframe) {
+                    const elements = iframe.contentWindow.document.getElementsByName(key);
+                    for (let i = 0; i < elements.length; i++) {
+                        const annotationId = this.getAnnotationId(elements[i]);
+                        if (!annotationId) continue;
+                        const rawValue = annotationStorage.getRawValue(annotationId);
+                        if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                            value = rawValue.value;
+                            break;
+                        }
+                    }
+                }
+
+                if (value === null) {
+                    for (let i = 0; i < widgets.length; i++) {
+                        const rawValue = annotationStorage.getRawValue(widgets[i].id);
+                        if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                            value = rawValue.value;
+                            break;
+                        }
+                    }
+                }
+
+                if (value === null) {
+                    const widgetWithValue = widgets.find((widget) => widget.value !== undefined && widget.value !== null && widget.value !== '');
+                    value = widgetWithValue ? widgetWithValue.value : widgets[0].value;
                 }
 
                 fieldValues[key] = value;
@@ -364,36 +441,38 @@ export class SvyPdfJsViewer extends ServoyBaseComponent<HTMLDivElement> {
         return fieldValues;
     };
 
-    public async getFieldNames(): Promise<string[] | null> {
+    public async getFieldNames() {
         const pdf = this.getPDFDocument();
         if (!pdf) return null;
 
-        const fieldNames: string[] = [];
-        const annotations = await pdf.getFieldObjects();
+        const fieldNames = [];
+        let annotations = await pdf.getFieldObjects();
         Object.keys(annotations).forEach((key) => {
-            const annotation = annotations[key][0];
+            let annotation = annotations[key][0];
             if (annotation.name) {
+                //fieldNames.push(annotation.name);
+                // why key and name are sometimes different? which is the correct one
                 fieldNames.push(key)
             }
         });
         return fieldNames;
     };
 
-    public getToolbarControlIds(): Array<string> | null {
+    public getToolbarControlIds(): Array<string> {
         const iframe = this.getIframe();
         if (!iframe) {
             return null;
         }
 
-        const toolbarViewer = iframe.contentWindow.document.getElementById('toolbarViewer');
+        let toolbarViewer = iframe.contentWindow.document.getElementById('toolbarViewer');
         if (!toolbarViewer)
             return null;
-        const toolbarSections = toolbarViewer.children;
-        let controls: any[] = [];
+        let toolbarSections = toolbarViewer.children;
+        let controls = [];
         for (let i = 0; i < toolbarSections.length; i++) {
             controls = controls.concat(Array.from(toolbarSections[i].children));
         }
-        const ids: string[] = [];
+        let ids = new Array();
         for (let i = 0; i < controls.length; i++) {
             if (controls[i].id) {
                 ids.push(controls[i].id);

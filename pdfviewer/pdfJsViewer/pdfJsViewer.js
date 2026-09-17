@@ -28,9 +28,12 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                         viewer.eventBus.on("pagerendered", () => {
                             if ($scope.model.enableTooltips) enableTooltips();
                             else disableTooltips();
+                            hideFieldControls();
+                        });
+                        viewer.eventBus.on("annotationlayerrendered", () => {
                             fillOutFormFields();
                             hideFieldControls();
-                        })
+                        });
                     });
                 });
             }
@@ -132,7 +135,10 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 for (let e = 0; e < elements.length; e++) {
                     let element = elements[e];
                     let name = element.firstChild.name;
-                    elementsMap.set(name, element);
+                    if (!elementsMap.has(name)) {
+                        elementsMap.set(name, []);
+                    }
+                    elementsMap.get(name).push(element);
                 }
 
                 const annotations = await pdf.getFieldObjects();
@@ -143,14 +149,18 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                     for (let a = 0; a < pageAnnotations.length; a++) {
                         let name = pageAnnotations[a].fieldName;
                         if (annotations[name] && elementsMap.get(name)) {
-                            let element = elementsMap.get(name);
-                            element.classList.add("tooltip");
-                            let x = iframe.contentWindow.document.createElement("SPAN");
-                            x.classList.add("tooltiptext");
-                            let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
-                            let t = iframe.contentWindow.document.createTextNode(tooltipText);
-                            x.appendChild(t);
-                            element.appendChild(x);
+                            elementsMap.get(name).forEach((element) => {
+                                if (element.getElementsByClassName('tooltiptext').length > 0) {
+                                    return;
+                                }
+                                element.classList.add("tooltip");
+                                let x = iframe.contentWindow.document.createElement("SPAN");
+                                x.classList.add("tooltiptext");
+                                let tooltipText = pageAnnotations[a].alternativeText ? pageAnnotations[a].alternativeText : pageAnnotations[a].fieldName;
+                                let t = iframe.contentWindow.document.createTextNode(tooltipText);
+                                x.appendChild(t);
+                                element.appendChild(x);
+                            });
                         }
                     }
                 }
@@ -186,22 +196,65 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
                 if (!fieldObjects) return;
 
                 Object.keys($scope.model.fieldValues).forEach((key) => {
-                    if (fieldObjects[key]) {
-                        let id = fieldObjects[key][0].id;
-                        let element = iframe.contentWindow.document.getElementById(id);
-                        if (element) {
-                            if (fieldObjects[key][0].type == 'text')
-                                element.value = $scope.model.fieldValues[key];
-                            else if (fieldObjects[key][0].type == 'checkbox')
-                                element.checked = $scope.model.fieldValues[key];
-                            else {
-                                console.warn('Cannot fill out form field: Only text and checkbox input types are currently implemented.');
-                                return;
-                            }
+                    const fieldWidgets = fieldObjects[key];
+                    if (!fieldWidgets || !fieldWidgets.length) return;
+
+                    let handled = false;
+                    const rawValue = $scope.model.fieldValues[key];
+
+                    fieldWidgets.forEach((widget) => {
+                        if (widget.type == 'text') {
+                            annotationStorage.setValue(widget.id, { value: toTextValue(rawValue) });
+                            handled = true;
+                        } else if (widget.type == 'checkbox') {
+                            annotationStorage.setValue(widget.id, { value: rawValue });
+                            handled = true;
                         }
-                        annotationStorage.setValue(id, { value: $scope.model.fieldValues[key] });
+                    });
+
+                    const elements = iframe.contentWindow.document.getElementsByName(key);
+                    let hasElement = false;
+                    for (let i = 0; i < elements.length; i++) {
+                        const element = elements[i];
+                        const inputType = element.type;
+                        if (inputType == 'text' || inputType == 'textarea') {
+                            element.value = toTextValue(rawValue);
+                            handled = true;
+                            hasElement = true;
+                        } else if (inputType == 'checkbox') {
+                            element.checked = rawValue;
+                            handled = true;
+                            hasElement = true;
+                        } else {
+                            continue;
+                        }
+                        const annotationId = getAnnotationId(element);
+                        if (annotationId) {
+                            const value = inputType == 'checkbox' ? rawValue : toTextValue(rawValue);
+                            annotationStorage.setValue(annotationId, { value: value });
+                        }
+                    }
+
+                    if (!handled && !hasElement) {
+                        console.warn('Cannot fill out form field "' + key + '": Only text and checkbox input types are currently implemented.');
                     }
                 });
+            }
+
+            function getAnnotationId(element) {
+                let node = element;
+                while (node) {
+                    const id = node.getAttribute && node.getAttribute('data-annotation-id');
+                    if (id) return id;
+                    node = node.parentElement;
+                }
+                return null;
+            }
+
+            function toTextValue(value) {
+                if (value === null || value === undefined) return value;
+                if (typeof value === 'boolean') return value;
+                return String(value);
             }
 
             function hideToolbarControls() {
@@ -243,12 +296,34 @@ angular.module('pdfviewerPdfJsViewer', ['servoy']).directive('pdfviewerPdfJsView
 
                 const annotations = await pdf.getFieldObjects();
                 Object.keys(annotations).forEach((key) => {
-                    let annotation = annotations[key][0];
-                    if (annotation.name) {
-                        let id = annotation.id
-                        let value = null
-                        if (annotationStorage.getValue(id)) {
-                            value = annotationStorage.getValue(id).value;
+                    const widgets = annotations[key];
+                    if (widgets && widgets.length && widgets[0].name) {
+                        let value = null;
+
+                        const elements = iframe.contentWindow.document.getElementsByName(key);
+                        for (let i = 0; i < elements.length; i++) {
+                            const annotationId = getAnnotationId(elements[i]);
+                            if (!annotationId) continue;
+                            const rawValue = annotationStorage.getValue(annotationId);
+                            if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                                value = rawValue.value;
+                                break;
+                            }
+                        }
+
+                        if (value === null) {
+                            for (let i = 0; i < widgets.length; i++) {
+                                const rawValue = annotationStorage.getValue(widgets[i].id);
+                                if (rawValue && rawValue.value !== undefined && rawValue.value !== null && rawValue.value !== '') {
+                                    value = rawValue.value;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (value === null) {
+                            const widgetWithValue = widgets.find((widget) => widget.value !== undefined && widget.value !== null && widget.value !== '');
+                            value = widgetWithValue ? widgetWithValue.value : widgets[0].value;
                         }
 
                         fieldValues[key] = value;
