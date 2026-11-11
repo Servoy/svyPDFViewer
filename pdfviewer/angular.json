@@ -21,13 +21,17 @@
           "configurations": {
             "production": {
               "tsConfig": "projects/pdfViewers/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/pdfViewers/tsconfig.lib.json"
             }
           }
         },
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/pdfViewers/tsconfig.spec.json"
+            "tsConfig": "projects/pdfViewers/tsconfig.spec.json",
+            "runnerConfig": "vitest-base.config.ts"
           }
         },
         "lint": {

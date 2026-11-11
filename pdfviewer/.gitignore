@@ -3,3 +3,6 @@
 /dist/
 /pdfviewer.zip
 /.angular/
+
+/coverage/
+/coverage-report.md
